@@ -42,19 +42,66 @@ class AppSDKHandler extends Component {
 
   handleAnimationClick(nextState) {
     console.log("handleAnimationClick - nextState: ", nextState);
-    playToAnimationState(this.state.composition, nextState);
+    const subComposition = this.state.composition.getSubcompositionByName(
+      "Score Bar"
+    );
+    console.log("handleAnimationClick: ", subComposition);
+    playToAnimationState(subComposition, nextState);
+  }
+
+  handleListCompositionsInAppClick() {
+    console.log("handleListCompositionsInAppClick - Called");
+    const compositions = this.state.singularApp.listCompositions();
+    console.log("handleListCompositionsInAppClick:", compositions);
+  }
+
+  handleListCompositionsInFirstOutputClick() {
+    console.log("handleListCompositionsInFirstOutputClick - Called");
+    const composition = this.state.firstOutput.getComposition();
+    console.log("handleListCompositionsInFirstOutputClick:", composition);
+    this.setState({ composition: composition });
+  }
+
+  handleListSubCompositionsInFirstOutputClick() {
+    console.log("handleListSubCompositionsInFirstOutputClick - Called");
+    const subCompositions = this.state.composition.listSubcompositions();
+    console.log(
+      "handleListSubCompositionsInFirstOutputClick:",
+      subCompositions
+    );
   }
 
   render() {
     return (
       <div>
         <h1>AppSDKHandler</h1>
-        <button onClick={() => this.handleAnimationClick("In")}>
-          Animate IN
-        </button>
-        <button onClick={() => this.handleAnimationClick("Out")}>
-          Animate OUT
-        </button>
+        <p>
+          <button onClick={() => this.handleListCompositionsInAppClick()}>
+            List Compositions in App
+          </button>
+        </p>
+        <p>
+          <button
+            onClick={() => this.handleListCompositionsInFirstOutputClick()}
+          >
+            List Composition in First Output
+          </button>
+        </p>
+        <p>
+          <button
+            onClick={() => this.handleListSubCompositionsInFirstOutputClick()}
+          >
+            List SubCompositions of Composition in First Output
+          </button>
+        </p>
+        <p>
+          <button onClick={() => this.handleAnimationClick("In")}>
+            Animate IN
+          </button>
+          <button onClick={() => this.handleAnimationClick("Out")}>
+            Animate OUT
+          </button>
+        </p>
       </div>
     );
   }

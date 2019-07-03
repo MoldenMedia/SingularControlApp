@@ -1,4 +1,18 @@
 /*****************************************************************************/
+/*
+  Singular App SDK Utilities
+  @name appSDKUtitlities.jsx
+  @author Singular Team
+  @version 0.0.1
+  @date 3/7/2019
+  @copyright (c) 2019 Singular.Live PTE
+  @license Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
+*/
+/*****************************************************************************/
+/*
+  
+*/
+/*****************************************************************************/
 // initialize Singular App
 export const initializeSingularApp = () => {
   console.log("initializeSingularApp - Called");
@@ -64,6 +78,16 @@ export const setCompositionToOutput = (composition, output) => {
   console.log("setCompositionToOutput - Called");
   if (composition) {
     output.setComposition(composition);
+    console.log(
+      "setCompositionToOutput - composition set to output",
+      composition,
+      output
+    );
+    console.log(
+      "setCompositionToOutput - getPreviewUrl",
+      output.getPreviewUrl()
+    );
+    console.log("setCompositionToOutput - getURL", output.getUrl());
     return composition;
   }
   return null;
