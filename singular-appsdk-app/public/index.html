@@ -52,13 +52,15 @@
 
     <!-- END FOR PRODUCTION -->
 
-    <!-- FOR DEVELOPMENT -->
-
-    <!-- <script src="http://app.singular.live/libs/singularapp/0.0.5/singularapp.js"></script> -->
-    <!-- <script src="https://app.singular.live/libs/singularplayer/0.1.2/singularplayer.js"></script> -->
-    <!-- <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>  -->
+    <!-- REQUIRED FOR DEVELOPMENT to run and test a Singular App on a local PC -->
+    <!-- Load to use the Singular App SDK Library -->
+    <!-- Required: ALLWAYS!! -->
     <script src="https://app.singular.live/libs/singularapp/0.0.5/singularapp.js"></script>
+    <!-- Load to use the Singular Graphics SDK Library -->
+    <!-- Required: for running a local instance of the Singular render engine -->
     <!-- <script src="https://app.singular.live/libs/singularplayer/0.1.2/singularplayer.js"></script> -->
+    <!-- Load the Firebase JavaScript Library -->
+    <!-- Required: ALLWAYS for sending data from the app to the composition and when using the App SDK storage feature -->
     <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
 
     <script>
@@ -80,7 +82,6 @@
         alert("ERROR: Could not connect to Singular server.");
       }
     </script>
-
     <!-- END FOR DEVELOPMENT -->
 
     <title>React App</title>
