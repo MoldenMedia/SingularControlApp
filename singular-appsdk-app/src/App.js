@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import AppSDKHandler from "./components/appSDKHandler";
+import AppSDKMaster from "./components/appSDKMaster";
 import "./App.css";
 
 class App extends Component {
@@ -7,7 +8,8 @@ class App extends Component {
     console.log("App - Rendered");
     return (
       <React.Fragment>
-        <AppSDKHandler />
+        <AppSDKMaster />
+        {/* <AppSDKHandler /> */}
       </React.Fragment>
     );
   }

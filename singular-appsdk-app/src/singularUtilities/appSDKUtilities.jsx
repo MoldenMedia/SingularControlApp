@@ -62,8 +62,8 @@ export const initializeSingularApp = () => {
 // Singular App SDK functions
 // The following sections covers functions of the Singular App SDK
 /*****************************************************************************/
+// singularApp root functions
 /*
-  singularApp functions
   .listOutputs()
   .getOutputById(id)
   .listCompositions()
@@ -80,124 +80,618 @@ export const initializeSingularApp = () => {
   .log
 */
 /*
-// short description of function
-export const saFunctionName = singularApp => {
-  console.log("saFunctionName - called");
-}
+ServerDate: ƒ ServerDate()
+audioBrowserEventCallback: ƒ (windowParent, callback)
+compositionBrowserEventCallback: ƒ (windowParent, callback)
+createSingularForm: ƒ (window, dom, _controlNode, callback)
+destroySingularForm: ƒ (dom)
+getAppInstanceInfo: ƒ ()
+getAudioBrowserUrl: ƒ ()
+getComposition: ƒ (id)
+getCompositionBrowserUrl: ƒ ()
+getCompositionById: ƒ (id)
+getCompositionByName: ƒ (name)
+getCompositionUrl: ƒ (comp)
+getImageBrowserUrl: ƒ ()
+getOutput: ƒ (id)
+getOutputById: ƒ (id)
+getOutputByName: ƒ (name)
+imageBrowserEventCallback: ƒ (windowParent, callback)
+importComposition: ƒ (comp, callback)
+listCompositions: ƒ ()
+listIdsByName: ƒ (array, name)
+listOutputs: ƒ ()
+log: {info: ƒ, warn: ƒ, error: ƒ}
+registerWindow: ƒ (_window)
+removeAllCompositions: ƒ (callback)
+removeCompositionById: ƒ (id, callback)
+removeCompositionByName: ƒ (name, callback)
+removeSingularForm: ƒ ()
+renderSingularForm: ƒ ()
+storage: {set: ƒ, update: ƒ, get: ƒ, on: ƒ, off: ƒ, …}
+
 */
 /*****************************************************************************/
 // list outputs defined in the App Template
-export const saListOutputs = singularApp => {
-  console.log("saListOutputs - called");
+export const appListOutputs = singularApp => {
+  // console.log("appListOutputs - called");
   const outputs = singularApp.listOutputs();
-  console.log("saListOutputs - n-outputs found: ", outputs.length);
+  console.log(".listOutputs() = ", outputs);
   return outputs;
 };
 
 // get output defined by id
-export const saGetOutputById = (singularApp, id) => {
-  console.log("saGetOutputById - called");
+export const appGetOutputById = (singularApp, id) => {
+  // console.log("appGetOutputById - called");
   const output = singularApp.getOutputById(id);
   if (output) {
-    console.log("saGetOutputById - output found: ", output);
+    console.log(".getOutputById(" + id + ") = ", output);
+    return output;
+  }
+  return null;
+};
+
+// get output defined by name
+export const appGetOutputByName = (singularApp, name) => {
+  // console.log("appGetOutputByName - called");
+  const output = singularApp.getOutputByName(name);
+  if (output) {
+    console.log(".getOutputByName(" + name + ") = ", output);
     return output;
   }
   return null;
 };
 
 // list compositions defined in the App Template
-export const saListCompositions = singularApp => {
-  console.log("saListCompositions - called");
-  const compositions = singularApp.listOutputs();
-  console.log(
-    "saListCompositions - n-compositions found: ",
-    compositions.length
-  );
+export const appListCompositions = singularApp => {
+  // console.log("appListCompositions - called");
+  const compositions = singularApp.listCompositions();
+  console.log(".listCompositions() = ", compositions);
   return compositions;
 };
 
 // get composition defined by id
-export const saGetCompositionById = (singularApp, id) => {
-  console.log("saGetCompositionById - called");
+export const appGetCompositionById = (singularApp, id) => {
+  // console.log("appGetCompositionById - called");
   const composition = singularApp.getCompositionById(id);
   if (composition) {
-    console.log("saGetCompositionById - composition found: ", composition);
+    console.log(".getCompositionById(" + id + ") = ", composition);
     return composition;
   }
+  console.log(".getCompositionById(" + id + ") = ", null);
   return null;
 };
 
 // get composition defined by name
-export const saGetCompositionByName = (singularApp, name) => {
-  console.log("saGetCompositionByName - called");
+export const appGetCompositionByName = (singularApp, name) => {
+  // console.log("appGetCompositionByName - called");
   const composition = singularApp.getCompositionByName(name);
   if (composition) {
-    console.log("saGetCompositionByName - composition found: ", composition);
+    console.log(".getCompositionByName(" + name + ") = ", composition);
     return composition;
   }
+  console.log(".getCompositionByName(" + name + ") = ", null);
   return null;
 };
 
 // get composition browser URL
-export const saGetCompositionBrowserUrl = singularApp => {
-  console.log("saGetCompositionBrowserUrl - called");
+export const appGetCompositionBrowserUrl = singularApp => {
+  // console.log("appGetCompositionBrowserUrl - called");
   const compositionBrowserUrl = singularApp.getCompositionBrowserUrl();
-  console.log("saGetCompositionBrowserUrl: ", compositionBrowserUrl);
+  console.log(".getCompositionBrowserUrl() = ", compositionBrowserUrl);
   return compositionBrowserUrl;
 };
 
 // composition browser event callback
-export const saCompositionBrowserEventCallback = singularApp => {
-  console.log("saCompositionBrowserEventCallback - called");
+export const appCompositionBrowserEventCallback = singularApp => {
+  // console.log("appCompositionBrowserEventCallback - called");
+  singularApp.compositionBrowserEventCallback(window, function(msg) {
+    console.log("msg = ", msg);
+    if (msg.event === "composition_selected") {
+      console.log("msg.event = ", msg.event);
+    }
+  });
 };
 
 // import composition
-export const saImportComposition = singularApp => {
-  console.log("saImportComposition - called");
+export const appImportComposition = (singularApp, composition) => {
+  // console.log("appImportComposition - called");
+  singularApp.importComposition(composition, function(result) {
+    console.log("result = ", result);
+    if (result.success) {
+      console.log("result.success = ", result.success);
+    }
+  });
 };
 
 // remove composition by id
-export const saRemoveCompositionById = (singularApp, name, callback) => {
-  console.log("saRemoveCompositionById - called");
+export const appRemoveCompositionById = (singularApp, id, callback) => {
+  console.log("appRemoveCompositionById - called");
+  singularApp.removeCompositionById(id, callback);
 };
 
 // remove composition by name
-export const saRemoveCompositionByName = (singularApp, name, callback) => {
-  console.log("saRemoveCompositionByName - called");
+export const appRemoveCompositionByName = (singularApp, name, callback) => {
+  console.log("appRemoveCompositionByName - called");
+  singularApp.removeCompositionByName(name, callback);
 };
 
 // remove all compositions
-export const saRemoveAllCompositions = (singularApp, callback) => {
-  console.log("saRemoveAllCompositions - called");
+export const appRemoveAllCompositions = (singularApp, callback) => {
+  console.log("appRemoveAllCompositions - called");
+  singularApp.removeAllCompositions(callback);
 };
 
 // list ids by name
-export const saListIdsByName = (singularApp, array, name) => {
-  console.log("saListIdsByName - called");
+export const appListIdsByName = (singularApp, array, name) => {
+  // console.log("appListIdsByName - called");
+  const ids = singularApp.listIdsByName(array, name);
+  console.log(".listIdsByName(array, " + name + ") = ", ids);
 };
 
 // get App Firebase storage
-export const saStorage = singularApp => {
-  console.log("saStorage - called");
+export const appStorage = singularApp => {
+  // console.log("appStorage - called");
   const storage = singularApp.storage;
   if (storage) {
-    console.log("saGetAppStorage - success: ", storage);
+    console.log(".storage = ", storage);
     return storage;
   }
-  console.log("saGetAppStorage - failed");
+  console.log(".storage = ", null);
   return null;
 };
 
 // get app log
-export const saLog = singularApp => {
-  console.log("saLog - called");
+export const appLog = singularApp => {
+  // console.log("appLog - called");
   const log = singularApp.log;
+  console.log(".log = ", log);
   return log;
 };
 
-//
-// CONTINUE HERE
-//
+// create a Singular form for a specific control node
+export const appCreateSingularForm = (
+  singularApp,
+  window,
+  dom,
+  controlNode,
+  callback
+) => {
+  console.log("appCreateSingularForm - called");
+  singularApp.createSingularForm(window, dom, controlNode, callback);
+};
+
+// destroy a Singular hosted form
+export const appDestroySingularForm = (singularApp, dom) => {
+  console.log("appDestroySingularForm - called");
+  singularApp.destroySingularForm(dom);
+};
+
+/*****************************************************************************/
+// singularApp output specific functions
+/*
+  .output.id: "-LioHwzJsDFQ6tgwtZqf"
+  .output.name: "Default"
+
+  .output.getComposition: ƒ ()
+  .output.getPreviewUrl: ƒ ()
+  .output.getUrl: ƒ ()
+  .output.setComposition: ƒ (composition)
+*/
+/*****************************************************************************/
+
+// set composition to output
+export const outGetComposition = output => {
+  // console.log("outGetComposition - called");
+  const composition = output.getComposition();
+  if (composition) {
+    console.log(".getComposition() = ", composition);
+    return composition;
+  }
+  console.log(".getComposition() = ", null);
+  return null;
+};
+
+// get preview URL
+export const outGetPreviewUrl = output => {
+  // console.log("outGetPreviewUrl - called");
+  const previewUrl = output.getPreviewUrl();
+  console.log(".getPreviewUrl() = ", previewUrl);
+  return previewUrl;
+};
+
+// get output URL
+export const outGetUrl = output => {
+  // console.log("outGetUrl - called");
+  const url = output.getUrl();
+  console.log(".getUrl() = ", url);
+  return url;
+};
+
+// set composition to output
+export const outSetComposition = (output, composition) => {
+  console.log("outSetComposition - called");
+  output.setComposition(composition);
+};
+
+/*****************************************************************************/
+// singularApp composition specific functions
+/*
+  .composition.compExtractId
+  .composition.id
+  .composition.name
+
+  .composition.getControlNode: ƒ ()
+  .composition.getLogicLayer: ƒ ()
+  .composition.getModel: ƒ ()
+  .composition.getPayload: ƒ ()
+  .composition.getProp: ƒ (prop)
+  .composition.getRefId: ƒ ()
+  .composition.getSequencer: ƒ ()
+  .composition.getState: ƒ ()
+  .composition.getSubcomposition: ƒ (id)
+  .composition.getSubcompositionById: ƒ (id)
+  .composition.getSubcompositionByName: ƒ (name)
+  .composition.getUISettings: ƒ ()
+  .composition.jumpTo: ƒ (to)
+  .composition.listSubcompositions: ƒ ()
+  .composition.off: ƒ (event)
+  .composition.on: ƒ (event, cb)
+  .composition.playTo: ƒ (to)
+  .composition.remove: ƒ (callback)
+  .composition.resetAllPayloads: ƒ ()
+  .composition.setPayload: ƒ (payload)
+  .composition._removeOutput: ƒ (output)
+  .composition._setOutput: ƒ (output)
+
+*/
+/*****************************************************************************/
+
+// get control node from composition
+export const compGetControlNode = composition => {
+  console.log("compGetControlNode - called");
+  const controlNode = composition.getControlNode();
+  if (controlNode) {
+    console.log(".getControlNode(): ", controlNode);
+    return controlNode;
+  }
+  return null;
+};
+
+// get logic layer from composition
+export const compGetLogicLayer = composition => {
+  console.log("compGetLogicLayer - called");
+  const logicLayer = composition.getLogicLayer();
+  if (logicLayer) {
+    console.log(".getLogicLayer(): ", logicLayer);
+    return logicLayer;
+  }
+  return null;
+};
+
+// get model from composition
+export const compGetModel = composition => {
+  console.log("compGetModel - called");
+  const model = composition.getModel();
+  if (model) {
+    console.log(".getModel(): ", model);
+    return model;
+  }
+  return null;
+};
+
+// get payload from composition
+export const compGetPayload = composition => {
+  console.log("compGetPayload - called");
+  const payload = composition.getPayload();
+  if (payload) {
+    console.log(".getPayload(): ", payload);
+    return payload;
+  }
+  return null;
+};
+
+// get property from composition
+export const compGetProp = (composition, prop) => {
+  console.log("compGetProp - called");
+  const property = composition.getProp(prop);
+  if (property) {
+    console.log(".getProp(): ", property);
+    return property;
+  }
+  return null;
+};
+
+// get refId from composition
+export const compGetRefId = composition => {
+  console.log("compGetRefId - called");
+  const refId = composition.getRefId();
+  if (refId) {
+    console.log(".getRefId(): ", refId);
+    return refId;
+  }
+  return null;
+};
+
+// get sequencer from composition
+export const compGetSequencer = composition => {
+  console.log("compGetSequencer - called");
+  const sequencer = composition.getSequencer();
+  if (sequencer) {
+    console.log(".getSequencer(): ", sequencer);
+    return sequencer;
+  }
+  return null;
+};
+
+// get state from composition
+export const compGetState = composition => {
+  console.log("compGetState - called");
+  const state = composition.getState();
+  if (state) {
+    console.log(".getState(): ", state);
+    return state;
+  }
+  return null;
+};
+
+// get subcomposition from composition
+export const compGetSubcomposition = (composition, id) => {
+  console.log("compGetSubcomposition - called");
+  const subcomposition = composition.getSubcomposition(id);
+  if (subcomposition) {
+    console.log(".getSubcomposition(): ", subcomposition);
+    return subcomposition;
+  }
+  return null;
+};
+
+// get subcomposition by id from composition
+export const compGetSubcompositionById = (composition, id) => {
+  console.log("compGetSubcompositionById - called");
+  const subcomposition = composition.getSubcompositionById(id);
+  if (subcomposition) {
+    console.log(".getSubcompositionById(): ", subcomposition);
+    return subcomposition;
+  }
+  return null;
+};
+
+// get subcomposition by name from composition
+export const compGetSubcompositionByName = (composition, name) => {
+  console.log("compGetSubcompositionByName - called");
+  const subcomposition = composition.getSubcompositionByName(name);
+  if (subcomposition) {
+    console.log(".getSubcompositionByName(): ", subcomposition);
+    return subcomposition;
+  }
+  return null;
+};
+
+// get UI settings from composition
+export const compGetUISettings = composition => {
+  console.log("compGetUISettings - called");
+  const subcomposition = composition.getUISettings();
+  if (subcomposition) {
+    console.log(".getUISettings(): ", subcomposition);
+    return subcomposition;
+  }
+  return null;
+};
+
+// jump to animation state from composition
+export const compJumpTo = (composition, nextState) => {
+  console.log("compJumpTo - called");
+  composition.jumpTo(nextState);
+};
+
+// get list subcomposition from composition
+export const compListSubcompositions = composition => {
+  console.log("compListSubcompositions - called");
+  const subcompositions = composition.listSubcompositions();
+  if (subcompositions) {
+    console.log(".listSubcompositions(): ", subcompositions);
+    return subcompositions;
+  }
+  return null;
+};
+
+// on state from composition
+export const compOn = (composition, event, callback) => {
+  console.log("compOn - called");
+  //  composition.On(event, callback);
+};
+
+// off state from composition
+export const compOff = (composition, event) => {
+  console.log("compOff - called");
+  //  composition.Off(event);
+};
+
+// play to animation state from composition
+export const compPlayTo = (composition, nextState) => {
+  console.log("compPlayTo - called");
+  composition.playTo(nextState);
+};
+
+// remove composition
+export const compRemove = (composition, callback) => {
+  console.log("compRemove - called");
+  //  composition.remove(callback);
+};
+
+// reset all payloads in composition
+export const compResetAllPayloads = composition => {
+  console.log("compResetAllPayloads - called");
+  composition.resetAllPayloads();
+};
+
+// set payload in composition
+export const compSetPayload = (composition, payload) => {
+  console.log("compSetPayload - payload = ", payload);
+  composition.setPayload(payload);
+};
+
+/*****************************************************************************/
+// singularApp subcomposition specific functions
+/*
+  .subcomposition.id
+  .subcomposition.name
+
+  .subcomposition.getControlNode: ƒ ()
+  .subcomposition.getLogicLayer: ƒ ()
+  .subcomposition.getModel: ƒ ()
+  .subcomposition.getPayload: ƒ ()
+  .subcomposition.getProp: ƒ (prop)
+  .subcomposition.getSequencer: ƒ ()
+  .subcomposition.getState: ƒ ()
+  .subcomposition.getSubcomposition: ƒ (id)
+  .subcomposition.getSubcompositionById: ƒ (id)
+  .subcomposition.getSubcompositionByName: ƒ (name)
+  .subcomposition.jumpTo: ƒ (to)
+  .subcomposition.listSubcompositions: ƒ ()
+  .subcomposition.playTo: ƒ (to)
+  .subcomposition.resetPayload: ƒ ()
+  .subcomposition.setPayload: ƒ (payload)
+*/
+
+// get control node from subcomposition
+export const subGetControlNode = subcomposition => {
+  console.log("subGetControlNode - called");
+  const controlNode = compGetControlNode(subcomposition);
+  return controlNode;
+};
+
+// get logic layer from subcomposition
+export const subGetLogicLayer = subcomposition => {
+  console.log("subGetLogicLayer - called");
+  const logicLayer = compGetLogicLayer(subcomposition);
+  return logicLayer;
+};
+
+// get model from subcomposition
+export const subGetModel = subcomposition => {
+  console.log("subGetModel - called");
+  const model = compGetModel(subcomposition);
+  return model;
+};
+
+// get payload from subcomposition
+export const subGetPayload = subcomposition => {
+  console.log("subGetPayload - called");
+  const payload = compGetPayload(subcomposition);
+  return payload;
+};
+
+// get property from subcomposition
+export const subGetProp = (subcomposition, prop) => {
+  console.log("subGetProp - called");
+  const property = compGetProp(subcomposition, prop);
+  return property;
+};
+
+// get sequencer from subcomposition
+export const subGetSequencer = subcomposition => {
+  console.log("subGetSequencer - called");
+  const sequencer = compGetSequencer(subcomposition);
+  return sequencer;
+};
+
+// get state from subcomposition
+export const subGetState = subcomposition => {
+  console.log("subGetState - called");
+  const state = compGetState(subcomposition);
+  return state;
+};
+
+// get subsubcomposition from subcomposition
+export const subGetSubcomposition = (subcomposition, id) => {
+  console.log("subGetSubcomposition - called");
+  const subsubcomposition = compGetSubcomposition(subcomposition, id);
+  return subsubcomposition;
+};
+
+// get subsubcomposition by id from subcomposition
+export const subGetSubcompositionById = (subcomposition, id) => {
+  console.log("subGetSubcompositionById - called");
+  const subsubcompositions = compGetSubcompositionById(subcomposition, id);
+  return subsubcompositions;
+};
+
+// get subsubcomposition by name from subcomposition
+export const subGetSubcompositionByName = (subcomposition, name) => {
+  console.log("subGetSubcompositionByName - called");
+  const subsubcompositions = compGetSubcompositionByName(subcomposition, name);
+  return subsubcompositions;
+};
+
+// get list subsubcomposition from subcomposition
+export const subListSubcompositions = subcomposition => {
+  console.log("subListSubcompositions - called");
+  const subsubcompositions = compListSubcompositions(subcomposition);
+  return subsubcompositions;
+};
+
+// subcomposition jump to next animation state
+export const subJumpTo = (subcomposition, nextState) => {
+  console.log("subJumpTo - nextState: ", nextState);
+  subcomposition.jumpTo(nextState);
+};
+
+// subcomposition play to next animation state
+export const subPlayTo = (subcomposition, nextState) => {
+  console.log("subPlayTo - nextState: ", nextState);
+  subcomposition.playTo(nextState);
+};
+
+// reset payload in subcomposition
+export const subResetPayload = subcomposition => {
+  console.log("subResetPayload - called");
+  subcomposition.resetPayload();
+};
+
+// set payload in subcomposition
+export const subSetPayload = (subcomposition, payload) => {
+  console.log("subSetPayload - payload = ", payload);
+  subcomposition.setPayload(payload);
+};
+
+/*
+// short description of function
+export const saFunctionName = singularApp => {
+  console.log("saFunctionName - called");
+}
+*/
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
 
 /*****************************************************************************/
 // get all outputs
