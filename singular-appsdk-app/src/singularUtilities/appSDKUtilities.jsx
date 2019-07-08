@@ -4,7 +4,7 @@
   @name appSDKUtitlities.jsx
   @author Singular Team
   @version 0.0.1
-  @date 3/7/2019
+  @date 08/07/2019
   @copyright (c) 2019 Singular.Live PTE
   @license Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 */
