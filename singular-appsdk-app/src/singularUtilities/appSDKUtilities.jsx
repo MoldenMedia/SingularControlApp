@@ -77,7 +77,6 @@ export const initializeSingularApp = () => {
   .removeAllCompositions(callback)
   .listIdsByName(array, name)
   .storage
-  .log
 */
 /*
 ServerDate: ƒ ServerDate()
@@ -101,7 +100,6 @@ importComposition: ƒ (comp, callback)
 listCompositions: ƒ ()
 listIdsByName: ƒ (array, name)
 listOutputs: ƒ ()
-log: {info: ƒ, warn: ƒ, error: ƒ}
 registerWindow: ƒ (_window)
 removeAllCompositions: ƒ (callback)
 removeCompositionById: ƒ (id, callback)
@@ -241,14 +239,6 @@ export const appStorage = singularApp => {
   return null;
 };
 
-// get app log
-export const appLog = singularApp => {
-  // console.log("appLog - called");
-  const log = singularApp.log;
-  console.log(".log = ", log);
-  return log;
-};
-
 // create a Singular form for a specific control node
 export const appCreateSingularForm = (
   singularApp,
@@ -317,7 +307,6 @@ export const outSetComposition = (output, composition) => {
 /*****************************************************************************/
 // singularApp composition specific functions
 /*
-  .composition.compExtractId
   .composition.id
   .composition.name
 
@@ -335,15 +324,12 @@ export const outSetComposition = (output, composition) => {
   .composition.getUISettings: ƒ ()
   .composition.jumpTo: ƒ (to)
   .composition.listSubcompositions: ƒ ()
-  .composition.off: ƒ (event)
-  .composition.on: ƒ (event, cb)
+  .composition.off: ƒ (event) ... not tested
+  .composition.on: ƒ (event, cb) ... not tested
   .composition.playTo: ƒ (to)
   .composition.remove: ƒ (callback)
   .composition.resetAllPayloads: ƒ ()
   .composition.setPayload: ƒ (payload)
-  .composition._removeOutput: ƒ (output)
-  .composition._setOutput: ƒ (output)
-
 */
 /*****************************************************************************/
 

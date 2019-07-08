@@ -85,13 +85,6 @@ class AppSDKMaster extends Component {
       }
     },
     {
-      name: ".log()",
-      comment: "",
-      handleClick(singularApp) {
-        appSDK.appLog(singularApp);
-      }
-    },
-    {
       name: ".function name here.",
       comment: "comment",
       handleClick(singularApp) {
@@ -174,12 +167,30 @@ class AppSDKMaster extends Component {
       }
     },
     {
-      name: "compGetProp",
-      comment: "comp on output",
+      name: "compGetProp(prop)",
+      comment: "prop='durations'",
       handleClick(singularApp) {
         const output = appSDK.appGetOutputByName(singularApp, "Default");
         const composition = appSDK.outGetComposition(output);
-        appSDK.compGetProp(composition);
+        appSDK.compGetProp(composition, "durations");
+      }
+    },
+    {
+      name: "compGetProp(prop)",
+      comment: "prop='timeline2Active'",
+      handleClick(singularApp) {
+        const output = appSDK.appGetOutputByName(singularApp, "Default");
+        const composition = appSDK.outGetComposition(output);
+        appSDK.compGetProp(composition, "timeline2Active");
+      }
+    },
+    {
+      name: "compGetProp(prop)",
+      comment: "prop='logicLayers'",
+      handleClick(singularApp) {
+        const output = appSDK.appGetOutputByName(singularApp, "Default");
+        const composition = appSDK.outGetComposition(output);
+        appSDK.compGetProp(composition, "logicLayers");
       }
     },
     {
@@ -270,21 +281,21 @@ class AppSDKMaster extends Component {
       }
     },
     {
-      name: "compOn(event, callback)",
-      comment: "no example",
+      name: "compOn(event='animation_state', callback)",
+      comment: "no example - 'not tested'",
       handleClick(singularApp) {
         const output = appSDK.appGetOutputByName(singularApp, "Default");
         const composition = appSDK.outGetComposition(output);
-        appSDK.compOn(composition, "event", function() {});
+        appSDK.compOn(composition, "animation_state", function() {});
       }
     },
     {
-      name: "compOff(event)",
-      comment: "no example",
+      name: "compOff((event='animation_state')",
+      comment: "no example - 'not tested'",
       handleClick(singularApp) {
         const output = appSDK.appGetOutputByName(singularApp, "Default");
         const composition = appSDK.outGetComposition(output);
-        appSDK.compOff(composition, "event");
+        appSDK.compOff(composition, "animation_state");
       }
     },
     {
@@ -370,13 +381,33 @@ class AppSDKMaster extends Component {
       }
     },
     {
-      name: "subGetProp",
-      comment: "subcomp='Score Bar'",
+      name: "subGetProp(prop)",
+      comment: "subcomp='Score Bar' prop='durations'",
       handleClick(singularApp) {
         const output = appSDK.appGetOutputByName(singularApp, "Default");
         const composition = appSDK.outGetComposition(output);
         const subcomposition = composition.getSubcompositionByName("Score Bar");
-        appSDK.subGetProp(subcomposition);
+        appSDK.subGetProp(subcomposition, "durations");
+      }
+    },
+    {
+      name: "subGetProp(prop)",
+      comment: "subcomp='Score Bar' prop='timeline2Active'",
+      handleClick(singularApp) {
+        const output = appSDK.appGetOutputByName(singularApp, "Default");
+        const composition = appSDK.outGetComposition(output);
+        const subcomposition = composition.getSubcompositionByName("Score Bar");
+        appSDK.subGetProp(subcomposition, "timeline2Active");
+      }
+    },
+    {
+      name: "subGetProp(prop)",
+      comment: "subcomp='Score Bar' prop='logicLayers'",
+      handleClick(singularApp) {
+        const output = appSDK.appGetOutputByName(singularApp, "Default");
+        const composition = appSDK.outGetComposition(output);
+        const subcomposition = composition.getSubcompositionByName("Score Bar");
+        appSDK.subGetProp(subcomposition, "logicLayers");
       }
     },
     {
