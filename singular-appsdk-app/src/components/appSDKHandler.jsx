@@ -1,12 +1,5 @@
 import React, { Component } from "react";
-import {
-  initializeSingularApp,
-  getListOfOutputs,
-  getFirstOutput,
-  getCompositionFromOutput,
-  playToAnimationState,
-  setCompositionToOutput
-} from "../singularUtilities/appSDKUtilities";
+import * as appSDK from "../singularUtilities/appSDKUtilities";
 
 class AppSDKHandler extends Component {
   singularData = {
@@ -22,18 +15,18 @@ class AppSDKHandler extends Component {
   // component did mount
   componentDidMount() {
     console.log("componentDidMount - Mounted");
-    initializeSingularApp().then(singularApp => {
+    appSDK.initializeSingularApp().then(singularApp => {
       if (singularApp) {
-        // this.singularData.singularApp = singularApp;
-        const outputs = getListOfOutputs(singularApp);
-        const firstOutput = getFirstOutput(singularApp);
-        const composition = getCompositionFromOutput(firstOutput);
-        setCompositionToOutput(composition, firstOutput);
+        const outputs = appSDK.appListOutputs(singularApp);
+        const output = appSDK.appGetOutputByName(singularApp, "Default");
+        const composition = appSDK.outGetComposition(output);
+        appSDK.outSetComposition(output, composition);
         this.setState({
           singularApp: singularApp,
           outputs: outputs,
-          firstOutput: firstOutput,
-          composition: composition
+          firstOutput: output,
+          composition: composition,
+          sdkFunctions: this.sdkAppRootFunctions
         });
         console.log("composition: ", composition);
       }
@@ -46,7 +39,7 @@ class AppSDKHandler extends Component {
       "Score Bar"
     );
     console.log("handleAnimationClick: ", subComposition);
-    playToAnimationState(subComposition, nextState);
+    appSDK.compPlayTo(subComposition, nextState);
   }
 
   handleListCompositionsInAppClick() {

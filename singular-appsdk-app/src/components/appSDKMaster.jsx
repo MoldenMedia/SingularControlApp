@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import AppSDKHandlerUI from "./appSDKHandlerUI";
 import * as appSDK from "../singularUtilities/appSDKUtilities";
+import { validate } from "@babel/types";
 
 class AppSDKMaster extends Component {
   singularData = {
@@ -46,10 +47,7 @@ class AppSDKMaster extends Component {
       name: ".getCompositionById(id)",
       comment: "id='168742-latest-1562097996430'",
       handleClick(singularApp) {
-        appSDK.appGetCompositionById(
-          singularApp,
-          "168742-latest-1562097996430"
-        );
+        appSDK.appGetCompositionById(singularApp, "168742-latest-1562097996430");
       }
     },
     {
@@ -68,12 +66,9 @@ class AppSDKMaster extends Component {
     },
     {
       name: ".importComposition(composition)",
-      comment:
-        "compToImport={ name: 'Stealth', composition: { refId: 168744 } }",
+      comment: "compToImport={ name: 'Stealth', composition: { refId: 168744 } }",
       handleClick(singularApp) {
-        const compToImport = [
-          { name: "Stealth", composition: { refId: 168744 } }
-        ];
+        const compToImport = [{ name: "Stealth", composition: { refId: 168744 } }];
         appSDK.appImportComposition(singularApp, compToImport);
       }
     },
@@ -123,7 +118,7 @@ class AppSDKMaster extends Component {
       comment: "composition.name='Epic'",
       handleClick(singularApp) {
         const output = appSDK.appGetOutputByName(singularApp, "Default");
-        const composition = appSDK.appGetCompositionByName(singularApp, "Epic");
+        const composition = appSDK.appGetCompositionByName(singularApp, "Default");
         appSDK.outSetComposition(output, composition);
       }
     }
@@ -226,10 +221,7 @@ class AppSDKMaster extends Component {
       handleClick(singularApp) {
         const output = appSDK.appGetOutputByName(singularApp, "Default");
         const composition = appSDK.outGetComposition(output);
-        appSDK.compGetSubcomposition(
-          composition,
-          "d20addc0-68a4-422c-8bc2-ee48f1076cbc"
-        );
+        appSDK.compGetSubcomposition(composition, "d20addc0-68a4-422c-8bc2-ee48f1076cbc");
       }
     },
     {
@@ -238,10 +230,7 @@ class AppSDKMaster extends Component {
       handleClick(singularApp) {
         const output = appSDK.appGetOutputByName(singularApp, "Default");
         const composition = appSDK.outGetComposition(output);
-        appSDK.compGetSubcompositionById(
-          composition,
-          "d20addc0-68a4-422c-8bc2-ee48f1076cbc"
-        );
+        appSDK.compGetSubcompositionById(composition, "d20addc0-68a4-422c-8bc2-ee48f1076cbc");
       }
     },
     {
@@ -280,24 +269,24 @@ class AppSDKMaster extends Component {
         appSDK.compListSubcompositions(composition);
       }
     },
-    {
-      name: "compOn(event='animation_state', callback)",
-      comment: "no example - 'not tested'",
-      handleClick(singularApp) {
-        const output = appSDK.appGetOutputByName(singularApp, "Default");
-        const composition = appSDK.outGetComposition(output);
-        appSDK.compOn(composition, "animation_state", function() {});
-      }
-    },
-    {
-      name: "compOff((event='animation_state')",
-      comment: "no example - 'not tested'",
-      handleClick(singularApp) {
-        const output = appSDK.appGetOutputByName(singularApp, "Default");
-        const composition = appSDK.outGetComposition(output);
-        appSDK.compOff(composition, "animation_state");
-      }
-    },
+    // {
+    //   name: "compOn(event='animation_state', callback)",
+    //   comment: "no example - 'not tested'",
+    //   handleClick(singularApp) {
+    //     const output = appSDK.appGetOutputByName(singularApp, "Default");
+    //     const composition = appSDK.outGetComposition(output);
+    //     appSDK.compOn(composition, "animation_state", function() {});
+    //   }
+    // },
+    // {
+    //   name: "compOff((event='animation_state')",
+    //   comment: "no example - 'not tested'",
+    //   handleClick(singularApp) {
+    //     const output = appSDK.appGetOutputByName(singularApp, "Default");
+    //     const composition = appSDK.outGetComposition(output);
+    //     appSDK.compOff(composition, "animation_state");
+    //   }
+    // },
     {
       name: "compPlayTo(to)",
       comment: "comp on output to='In'",
@@ -437,10 +426,7 @@ class AppSDKMaster extends Component {
         const output = appSDK.appGetOutputByName(singularApp, "Default");
         const composition = appSDK.outGetComposition(output);
         const subcomposition = composition.getSubcompositionByName("Score Bar");
-        appSDK.subGetSubcomposition(
-          subcomposition,
-          "d20addc0-68a4-422c-8bc2-ee48f1076cbc"
-        );
+        appSDK.subGetSubcomposition(subcomposition, "d20addc0-68a4-422c-8bc2-ee48f1076cbc");
       }
     },
     {
@@ -450,10 +436,7 @@ class AppSDKMaster extends Component {
         const output = appSDK.appGetOutputByName(singularApp, "Default");
         const composition = appSDK.outGetComposition(output);
         const subcomposition = composition.getSubcompositionByName("Score Bar");
-        appSDK.subGetSubcompositionById(
-          subcomposition,
-          "d20addc0-68a4-422c-8bc2-ee48f1076cbc"
-        );
+        appSDK.subGetSubcompositionById(subcomposition, "d20addc0-68a4-422c-8bc2-ee48f1076cbc");
       }
     },
     {
@@ -534,10 +517,64 @@ class AppSDKMaster extends Component {
 
   sdkAppStorageFunctions = [
     {
-      name: "sdkAppStorageFunctions",
-      comment: "",
+      name: ".get(key, callback)",
+      comment: "key = 'storageName'",
       handleClick(singularApp) {
-        appSDK.appListOutputs(singularApp);
+        const storage = appSDK.appStorage(singularApp);
+        appSDK.storageGet(storage, "storageName", data => {
+          console.log("storageGet.Callback - called ", data);
+          return data;
+        });
+      }
+    },
+    {
+      name: ".set(key, data, callback)",
+      comment: "data = '{UTC: '" + Date.now() + "'}'",
+      handleClick(singularApp) {
+        const storage = appSDK.appStorage(singularApp);
+        appSDK.storageSet(storage, "storageName", { UTC: Date.now() }, function() {
+          console.log("storageSet.Callback - called");
+        });
+      }
+    },
+    {
+      name: ".update(key, data, callback)",
+      comment: "data = Date.now(): " + Date.now(),
+      handleClick(singularApp) {
+        const storage = appSDK.appStorage(singularApp);
+        appSDK.storageUpdate(storage, "storageName", { UTC: Date.now() }, function() {
+          console.log("storageUpdate.Callback - called");
+        });
+      }
+    },
+    {
+      name: ".remove(key, callback)",
+      comment: "key = 'storageName'",
+      handleClick(singularApp) {
+        const storage = appSDK.appStorage(singularApp);
+        appSDK.storageRemove(storage, "storageName", function() {
+          console.log("storageRemove.Callback - called");
+        });
+      }
+    },
+    {
+      name: ".on(key, callback)",
+      comment: "key = 'storageName'",
+      handleClick(singularApp) {
+        const storage = appSDK.appStorage(singularApp);
+        appSDK.storageOn(storage, "storageName", function() {
+          console.log("storageOn.Callback - called");
+        });
+      }
+    },
+    {
+      name: ".off(key, callback)",
+      comment: "key = 'storageName'",
+      handleClick(singularApp) {
+        const storage = appSDK.appStorage(singularApp);
+        appSDK.storageOff(storage, "storageName", function() {
+          console.log("storageOff.Callback - called");
+        });
       }
     }
   ];
@@ -553,14 +590,14 @@ class AppSDKMaster extends Component {
     appSDK.initializeSingularApp().then(singularApp => {
       if (singularApp) {
         // this.singularData.singularApp = singularApp;
-        const outputs = appSDK.getListOfOutputs(singularApp);
-        const firstOutput = appSDK.getFirstOutput(singularApp);
-        const composition = appSDK.getCompositionFromOutput(firstOutput);
-        appSDK.setCompositionToOutput(composition, firstOutput);
+        const outputs = appSDK.appListOutputs(singularApp);
+        const output = appSDK.appGetOutputByName(singularApp, "Default");
+        const composition = appSDK.outGetComposition(output);
+        appSDK.outSetComposition(output, composition);
         this.setState({
           singularApp: singularApp,
           outputs: outputs,
-          firstOutput: firstOutput,
+          firstOutput: output,
           composition: composition,
           sdkFunctions: this.sdkAppRootFunctions
         });
@@ -573,35 +610,27 @@ class AppSDKMaster extends Component {
     return (
       <React.Fragment>
         <nav className="navbar navbar-light bg-light">
-          <span className="navbar-brand mb-0 h1">
-            Singular App SDK Utilities
-          </span>
+          <span className="navbar-brand mb-0 h1">Singular App SDK Utilities</span>
         </nav>
         <div className="btn-group m-2" role="group" aria-label="Basic example">
           <button
             type="button"
             className="btn btn-outline-primary btn-sm"
-            onClick={() =>
-              this.setState({ sdkFunctions: this.sdkAppRootFunctions })
-            }
+            onClick={() => this.setState({ sdkFunctions: this.sdkAppRootFunctions })}
           >
             singularApp Funcs
           </button>
           <button
             type="button"
             className="btn btn-outline-primary btn-sm"
-            onClick={() =>
-              this.setState({ sdkFunctions: this.sdkAppOutputFunctions })
-            }
+            onClick={() => this.setState({ sdkFunctions: this.sdkAppOutputFunctions })}
           >
             .output Funcs
           </button>
           <button
             type="button"
             className="btn btn-outline-primary btn-sm"
-            onClick={() =>
-              this.setState({ sdkFunctions: this.sdkAppCompositionFunctions })
-            }
+            onClick={() => this.setState({ sdkFunctions: this.sdkAppCompositionFunctions })}
           >
             .composition Funcs
           </button>
@@ -619,18 +648,14 @@ class AppSDKMaster extends Component {
           <button
             type="button"
             className="btn btn-outline-primary btn-sm"
-            onClick={() =>
-              this.setState({ sdkFunctions: this.sdkAppSequencerFunctions })
-            }
+            onClick={() => this.setState({ sdkFunctions: this.sdkAppSequencerFunctions })}
           >
             .sequencer Funcs
           </button>
           <button
             type="button"
             className="btn btn-outline-primary btn-sm"
-            onClick={() =>
-              this.setState({ sdkFunctions: this.sdkAppStorageFunctions })
-            }
+            onClick={() => this.setState({ sdkFunctions: this.sdkAppStorageFunctions })}
           >
             .storage Funcs
           </button>
@@ -645,10 +670,7 @@ class AppSDKMaster extends Component {
               <th scope="col">Do it</th>
             </tr>
           </thead>
-          <AppSDKHandlerUI
-            sdkFunctions={this.state.sdkFunctions}
-            singularApp={this.state.singularApp}
-          />
+          <AppSDKHandlerUI sdkFunctions={this.state.sdkFunctions} singularApp={this.state.singularApp} />
         </table>
       </React.Fragment>
     );
