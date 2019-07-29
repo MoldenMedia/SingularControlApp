@@ -562,9 +562,14 @@ class AppSDKMaster extends Component {
       comment: "key = 'storageName'",
       handleClick(singularApp) {
         const storage = appSDK.appStorage(singularApp);
-        appSDK.storageOn(storage, "storageName", function() {
-          console.log("storageOn.Callback - called");
-        });
+        appSDK.storageOn(storage, "storageName", v => cbOnStorage(v));
+        // appSDK.storageOn(storage, "storageName", function() {
+        //   console.log("storageOn.Callback - called");
+        // });
+
+        function cbOnStorage(v) {
+          console.log("-> cbOnStorage ................ v: ", v);
+        }
       }
     },
     {
@@ -572,9 +577,13 @@ class AppSDKMaster extends Component {
       comment: "key = 'storageName'",
       handleClick(singularApp) {
         const storage = appSDK.appStorage(singularApp);
-        appSDK.storageOff(storage, "storageName", function() {
-          console.log("storageOff.Callback - called");
-        });
+        appSDK.storageOff(storage, "storageName", cbOffStorage);
+        // appSDK.storageOff(storage, "storageName", function() {
+        //   console.log("storageOff.Callback - called");
+        // });
+        function cbOffStorage() {
+          console.log("-> cbOffStorage ................");
+        }
       }
     }
   ];

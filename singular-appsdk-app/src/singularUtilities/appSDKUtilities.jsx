@@ -803,10 +803,16 @@ export const storageOn = (storage, key, callback) => {
   console.log("storageOn(storage, key, callback) - called");
   if (storage) {
     storage.on(key, callback);
+    // storage.on(key, callbackLocal("storageOn"));
     console.log(".on(key, callback) - called");
     return;
   }
   console.log("WARNING: storageOn(storage, key, callback) - invalid storage object! storage = ", storage);
+
+  // function callbackLocal(comment) {
+  //   console.log("-> callbackLocal .... : comment = ", comment);
+  //   return;
+  // }
 };
 
 // register callback "off" storage
