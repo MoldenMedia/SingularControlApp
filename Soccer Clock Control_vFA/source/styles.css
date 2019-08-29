@@ -1,0 +1,199 @@
+@charset "utf-8";
+/* CSS Document */
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: "Lato";
+	color: #383838;
+	background: #383838;
+}
+
+a {
+	text-decoration: none;
+	color: white;
+	
+}
+h3 {
+	color: white;
+	font-weight: 100;
+}
+
+h2 {
+	color: white;
+	font-weight: 100;
+	margin-left: 210px;
+	margin-top: 60px;
+}
+
+td {
+	text-align: right;
+}
+
+.container {
+	max-width: 960px;
+	width: 96%;
+	min-height: 10px;
+	margin: auto;
+}
+
+
+.isDisabled {
+    color: currentColor;
+    cursor: not-allowed !important;
+    opacity: 0.5;
+    text-decoration: none;
+}
+header {
+	background: #282828;
+	margin-bottom: 20px;
+	overflow: hidden;
+	text-align: center;
+}
+
+.logo {
+	float: left;
+	margin-top: 10px;
+}
+
+nav {
+	float: right;
+	line-height: 70px;
+}
+
+nav li {
+	display: inline-block;
+	padding: 7px 20px;
+	margin-left: 8px;
+	background: #515151;
+	line-height: normal;
+	color: white;
+	cursor: default;
+}
+
+li:hover {
+	background-image: linear-gradient(#0070c0, #0070c0);
+	background: #1e1e1e;
+}
+
+
+.buttons {
+	padding-top: 30px;
+	text-align: center;
+	line-height: normal;
+	color: white;
+}
+
+.savebutton {	
+	background-color: #515151;
+	cursor: pointer;
+	color: White;
+	font-family: "Lato";
+	font-weight: 100;
+	font-size: 10pt;
+	padding: 6px;
+	text-decoration: none;
+}
+
+.savebutton:hover {
+	background-color: #282828;
+}
+
+	
+.bluebutton {	
+	background-color: #515151;
+	cursor: pointer;
+	color: White;
+	font-family: "Lato";
+	margin-right: 50px;
+	font-weight: 100;
+	font-size: 15pt;
+	padding: 30px;
+	text-decoration: none;
+}
+
+.bluebutton:hover {
+	background-color: #282828;
+}
+
+.buttonactive {
+	background-color: #f21b22;
+}
+
+.form {
+	padding: 20px;
+}
+
+.formcontrol {
+	color: white
+}
+
+.iFrame {
+	background-color: dimgray;
+	width:800px;
+	height:400px;
+}
+
+.row {
+	display:flex;
+	justify-content: center;
+	height:65px;
+}
+
+.btnrow {
+	display:flex;
+	justify-content: center;
+	/*width:100%;*/
+	height:40px;
+}
+
+.btn-group button {
+    background-color: #515151;
+    border: 1px solid #282828;
+    color: white;
+    padding: 8px 15px;
+    cursor: pointer;
+    width: 36px;
+    display: block;
+}
+
+.btn-group button:not(:last-child) {
+    border-bottom: none;
+}
+
+.btn-group button:hover {
+    background-color: #282828;
+}
+
+.team {
+	height: 50px;
+}
+
+.seperator {
+	font-size: 30pt;
+	text-align: center;
+	margin: 10px;
+	color: black;
+}
+
+.prodbluebutton {	
+	font-family: "Lato";
+	background-color: #515151;
+    border: none;
+    color: white;
+    padding: 6px 4.5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+	width: 95px;
+	cursor: default;
+}
+
+.prodbluebutton:hover {
+	background-color: #282828;
+}
+
+.prodbuttons {
+	margin-top: 1px;
+}

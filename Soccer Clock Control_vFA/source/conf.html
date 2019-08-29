@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+</head>
+
+<body style="margin: 0; background:none" onload="onLoaded()">
+    <div class="container">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="app.html">Soccer Control Application</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="app.html">Home</a></li>
+                    <li class="active"><a href="conf.html">Configuration</a></li>
+                    <li><a id="prodlink" href="prod.html">Production</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="row col-xs-4 col-md-offset-4">
+            <div class="form-group">
+                <label for="usr">Singular Username:</label>
+                <input type="text" class="form-control" id="usr" placeholder="Enter Username here">
+            </div>
+
+            <div class="form-group">
+                <label for="pwd">Singular Password:</label>
+                <input type="text" class="form-control" id="pwd" placeholder="Enter Password here">
+            </div>
+            <div class="form-group">
+                <label for="appid">Main Channel Tokens:</label>
+                <input type="text" class="form-control" id="appid" placeholder="1234, 1233, 1235, ....">
+            </div>
+            <div class="form-group text-right">
+                <button type="button" class="btn-primary" onclick="saveIt()"> Save Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var singularApp;
+
+        const usr = "#usr";
+        const pwd = "#pwd";
+        const appid = "#appid";
+
+
+
+        function singularAppInit(app) {
+            singularApp = app;            
+        }
+        
+        function onLoaded() {
+
+            var appids = localStorage.getItem(appid);
+            var user = localStorage.getItem(usr);
+            var pass = localStorage.getItem(pwd);
+
+            $(usr).val(user);
+            $(pwd).val(pass);
+            $(appid).val(appids);
+
+            if (appids && user && pass) {
+                document.getElementById('prodlink').disabled = false;
+
+            } else {
+                $('#prodlink').click(function(e) {
+                    e.preventDefault();
+                    //do other stuff when a click happens
+                });
+            }
+        }
+
+        function saveIt() {
+            var user = $(usr).val();
+            var pwde = $(pwd).val();
+            var appidd = $(appid).val();
+
+            localStorage.setItem(usr, user);
+            localStorage.setItem(pwd, pwde);
+            localStorage.setItem(appid, appidd);
+
+            if (appidd && user && pwde) {
+                document.getElementById('prodlink').disabled = false;
+                $('#prodlink').click(function(e) {                    
+                    window.location.href = "prod.html";
+                });
+
+            } else {
+                $('#prodlink').click(function(e) {
+                    e.preventDefault();
+                    //do other stuff when a click happens
+                });
+            }
+        }
+
+        function singularAppInit(app) {
+            singularApp = app;
+        }
+    </script>
+</body>
+
+</html>

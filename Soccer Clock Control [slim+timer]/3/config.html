@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Singular - Soccer Control App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+    <script src="https://app.singular.live/libs/singularapp/0.0.5/singularapp.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="images/singular.png" width="230" alt="Singular.Live" title="">
+            </div>
+
+            <nav>
+                <li><a href="app.html">Home</a></li>
+                <li class="buttonactive"><a href="config.html">Configuration</a></li>
+                <li><a id="prodlink" href="playout.html" >Production</a></li>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <h3>Connect your Singular Account and Tokens:</h3>
+        </div>
+    </div>
+
+    <div class="form">
+        <form>
+            <table align="center">
+                <tr>
+                    <td>
+                        <a for="token" class="formcontrol">App Access Token:</a>
+                    </td>
+                    <td>
+                        <input type="text" placeholder=" apptoken" id="apptoken" style="width:250px; height:25px">
+                    </td>
+                </tr>                
+                <tr>
+                    <td>
+                        <a for="baseurl" class="formcontrol">Main Channel Tokens:</a>
+                    </td>
+                    <td>
+                        <input type="text" placeholder="  token" id="appid" style="width:250px; height:25px">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td> # </td>
+                    <td> # </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://www.singular.live/" style="color:red; text-decoration: underline;">Help me!</a>
+                    </td>
+                    <td>
+                        <a href="config.html" class="savebutton" onclick="saveIt();">Save</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+
+   <script>
+        var singularApp;
+
+        const tkn = "#apptoken";
+        const appid = "#appid";
+        const userDataKey = 'UserData';
+
+        var storage;
+
+        function singularAppInit(app) {
+            singularApp = app;
+            if (singularApp) {
+                storage = singularApp.storage;
+                storage.get(userDataKey, userDataGot);
+            }
+        }
+
+
+
+        function userDataGot(what) {
+            console.log('userDataGot: ' + what);
+
+            if (what == null) {
+                return;
+            }
+
+            var token = null;
+            var appids = null;
+
+            if (what.Token !== undefined) {
+                token = what.Token;
+            }
+
+
+            if (what.IDs !== undefined) {
+                appids = what.IDs;
+            }
+
+            $(tkn).val(token);
+            $(appid).val(appids);
+        }
+
+
+        function saveIt() {
+            var token = $(tkn).val();
+            var appidd = $(appid).val();
+
+            storage.set(userDataKey, {
+                Token: token,
+                IDs: appidd
+            });
+        }
+
+    </script>
+
+
+</body>
+
+</html>

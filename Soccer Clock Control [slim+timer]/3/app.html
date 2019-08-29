@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Singular - Soccer Control App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+    <script src="https://app.singular.live/libs/singularapp/0.0.5/singularapp.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="images/singular.png" width="230" alt="Singular.Live" title="">
+            </div>
+
+            <nav>
+                <li class="buttonactive"><a href="app.html">Home</a></li>
+                <li><a href="config.html">Configuration</a></li>
+                <li><a id="prodlink" href="playout.html">Production</a></li>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <h3>Welcome to the Soccer Control Application!</h3>
+        </div>
+    </div>
+    <div class="container">
+        <h2>What do you want to do?</h2>
+    </div>
+    <div class="buttons">
+        <a href="config.html" class="bluebutton">Configuration</a>
+        <a id="prodbutton" href="playout.html" class="bluebutton">Production</a>
+    </div>
+    <script>
+        const tkn = "#apptoken";
+        const appid = "#appid";
+        var singularapp;
+
+        const userDataKey = 'UserData';
+
+        var storage;
+
+        function singularAppInit(app) {
+            singularApp = app;
+            if (singularApp) {
+                storage = singularApp.storage;
+                storage.get(userDataKey, userDataGot);
+            }
+        }
+
+
+        function userDataGot(what) {
+            console.log('userDataGot: ' + what);
+
+            if (what == null) {
+                return;
+            }
+
+            var tkn = null;
+            var appidd = null;
+
+            if (what.Token !== undefined) {
+                tkn = what.Token;
+            }
+
+            if (what.IDs !== undefined) {
+                appidd = what.IDs;
+            }
+        }
+
+    </script>
+</body>
+
+</html>

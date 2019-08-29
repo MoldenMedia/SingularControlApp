@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Singular - Soccer Control App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+    <script src="https://app.singular.live/libs/singularapp/0.0.5/singularapp.js"></script>
+</head>
+
+<body onload="onLoaded();">
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="images/singular.png" width="230" alt="Singular.Live" title="">
+            </div>
+
+            <nav>
+                <li><a href="app.html">Home</a></li>
+                <li><a href="config.html">Configuration</a></li>
+                <li class="buttonactive"><a href="playout.html">Production</a></li>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <div class="row" style="height: 250px">
+            <iframe class="iFrame" id="appframe" src=""></iframe>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row" style="margin-top: 10px;">
+            <input type="text" placeholder="FCB" id="homeTeamName" value="FCB" style="text-align: center;font-size: 15pt; width: 60px;">
+
+            <input type="text" placeholder="0" id="homeScore" style="text-align: center;font-size: 15pt;width: 45px;" value="0">
+            <p class="seperator">:</p>
+            <input type="text" placeholder="0" id="awayScore" style="text-align: center;font-size: 15pt;width: 45px;" value="0">
+            <div class="btn-group">
+
+            </div>
+            <input type="text" placeholder="HSV" id="awayTeamName" value="HSV" style="text-align: center;font-size: 15pt; width: 60px">
+            <br style="line-height: 30px">
+
+        </div>
+    </div>
+
+    <div class="container" style="height: 42px;">
+        <div class="row" style="margin-top: 5px;">
+            <div class="btn-group">
+                <button onclick="addHome();">+</button>
+                <button onclick="removeHome();" style="margin-right: 30px;">-</button>
+                <button onclick="addAway();">+</button>
+                <button onclick="removeAway();">-</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row" style="height: 42px;">
+            <div class="prodbuttons">
+                <a class="prodbluebutton" onclick="setTeams();" style="margin-right: 30px;">SET TEAMS</a>
+                <a class="prodbluebutton" onclick="setScore();">SET SCORE</a>
+            </div>
+        </div>
+        <div class="row">
+            <input type="text" placeholder="00:00" id="clocktext" value="00:00" style="text-align: center;font-size: 14pt;width: 90px;" onkeypress="return AllowNumbersOnly(event)">
+        </div>
+    </div>
+    <div class="container" style="margin-top: 5px;">
+        <div class="row" style="height: 35px;">
+            <div class="prodbuttons">
+                <a class="prodbluebutton" onclick="clockIn();" style="margin-right: 30px;">CLOCK IN</a>
+                <a class="prodbluebutton" id="startbutton" onclick="startStopClock();">START</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="prodbuttons">
+            <a class="prodbluebutton" onclick="clockOut();" style="margin-right: 30px;">CLOCK OUT</a>
+            <a class="prodbluebutton" onclick="setTime();">SET TIME</a>
+        </div>
+    </div>
+
+    <div id="starttime" style="display: none">00:00</div>
+    <script>
+        const payloadDataKey = 'PayloadData';
+
+        const userDataKey = 'UserData';
+
+
+        const appid = "#appid";
+        const hs = "#homeScore";
+        const as = "#awayScore";
+
+        const hn = "#homeTeamName";
+        const an = "#awayTeamName";
+
+        const ct = "#clocktext"
+        const stt = "#starttime";
+
+
+        const cOut = "Out";
+        const cIn = "In";
+
+        const cA = "action";
+        const cF = "from";
+        const cT = "to";
+        const cAni = "animation";
+        const cDo = "play";
+
+        const cCN = "compositionName";
+        const cPL = "payload";
+        const cCoNo = "controlNode";
+
+        const cUID = "socceruid";
+        const cUserID = "socceruserid";
+        const cUserPW = "soccerpassword";
+
+
+        var appids = [];
+        var tnk = "#apptoken";
+        var token = "";
+        var timer = null;
+
+        let controlid = {};
+        let state = {};
+        let dbid = {};
+        let constring = {};
+        let clocktime = {};
+
+        let singulardata = [];
+        let clockdata = [];
+
+        var singularApp;
+
+        var storage;
+
+        var started = false;
+        var oldCurrent = 0;
+        var timec = null;
+
+
+        function onLoaded() {
+          //  appids = ["71154"];
+          //  setOutputs();
+          //  getNodes();
+        }
+
+        function singularAppInit(app) {
+                  singularApp = app;
+                  if (singularApp) {
+                      storage = singularApp.storage;
+                      //storage.get(payloadDataKey, payloadDataGot);
+                      storage.get(userDataKey, userDataGot);
+                  }
+                  getNodes();
+        }
+
+        function setOutputs() {
+            $("#appframe").attr('src', "https://app.singular.live/appinstances/" + appids[0] + "/outputs/Output/onair");
+        }
+
+
+        function AllowNumbersOnly(e) {
+            var code = (e.which) ? e.which : e.keyCode;
+            if (code > 31 && (code < 48 || code > 57) && code != 58) {
+                e.preventDefault();
+            }
+        }
+
+        function setScore() {
+            var body = [{
+                [cCN]: "Scorebug",
+                [cCoNo]: {
+                    [cPL]: {
+                        ["Team 1 Score"]: $(hs).val(),
+                        ["Team 2 Score"]: $(as).val()
+                    }
+                }
+            }];
+
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id);
+            }
+
+            saveValues();
+        }
+
+        function setTeams() {
+
+            var body = [{
+                [cCN]: "Scorebug",
+                [cCoNo]: {
+                    [cPL]: {
+                        ["Team 1 Name"]: $(hn).val(),
+                        ["Team 2 Name"]: $(an).val()
+                    }
+                }
+            }];
+
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id);
+            }
+
+            saveValues();
+        }
+
+
+        function clockIn() {
+
+            var body = [{
+                [cCN]: "Scorebug",
+                [cAni]: {
+                    [cA]: cDo,
+                    [cF]: cOut,
+                    [cT]: cIn
+                }
+            }];
+
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id);
+            }
+
+        }
+
+        function clockOut() {
+
+            var body = [{
+                [cCN]: "Scorebug",
+                [cAni]: {
+                    [cA]: cDo,
+                    [cF]: cIn,
+                    [cT]: cOut
+                }
+            }];
+
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id);
+            }
+
+
+        }
+
+        function startStopClock() {
+            if (started) {
+                stopClock();
+            } else {
+                startClock();
+            }
+        }
+
+        function stopClock() {
+
+            var sval = $(ct).val();
+            $(stt).val(sval);
+
+            var body = [{
+                [cCN]: "Scorebug",
+                [cCoNo]: {
+                    [cPL]: {
+                        ["Period Start"]: sval,
+                        ["clock_controller"]: {
+                            ["command"]: "reset"
+                        }
+                    }
+                }
+            }];
+            
+            timer.setUpdateCallback(empty);
+            timer = null;
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id, true);
+            }
+
+            $(ct).prop("readonly", false);
+            $("#startbutton").html('Start');
+        }
+
+        function startClock() {
+            var body = [{
+                [cCN]: "Scorebug",
+                [cCoNo]: {
+                    [cPL]: {
+                        ["clock_controller"]: {
+                            ["command"]: "play"
+                        }
+                    }
+                }
+            }];
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id, true);
+            }
+
+
+            $(ct).prop("readonly", true);
+            $("#startbutton").html('Stop');
+
+        }
+        
+        function empty(){
+            
+        }
+
+        function setTime() {
+            var startime = $(ct).val();
+            var splitted = startime.split(':');
+            var utcNow = Date.now();
+
+            var body = [{
+                [cCN]: "Scorebug",
+                [cCoNo]: {
+                    [cPL]: {
+                        ["Period Start"]: startime,
+                        ["UTC Start"]: utcNow
+                    }
+                }
+            }];
+
+
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id);
+            }
+            saveValues();
+
+        }
+
+
+
+
+        function trailingZeros(number) {
+            switch (typeof number) {
+                case 'number':
+                    return ((number < 10) && (number >= 0)) ? ("0") + number : number;
+                case 'string':
+                    return ((number.toString().length < 2) && (number.toString().length > 0)) ? "0" + number : number;
+                case 'undefined':
+                    return "00";
+            }
+        }
+
+        function hmsToSecondsOnly(str) {
+            if (!(typeof str === "string")) {
+                return null;
+            }
+            var p = str.split(':'),
+                s = 0,
+                m = 1;
+            while (p.length > 0) {
+                s += m * parseInt(p.pop(), 10);
+                m *= 60;
+            }
+            return s;
+        }
+
+        function secondsToHms(d) {
+            d = Number(d);
+            var m = Math.floor(d / 60);
+            var s = Math.floor(d % 3600 % 60);
+            return ((m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s);
+        }
+
+        function saveScore() {
+            storage.update(payloadDataKey, {
+                HomeScore: $(hs).val(),
+                AwayScore: $(as).val()
+            });
+        }
+
+        function saveNames() {
+            storage.update(payloadDataKey, {
+                HomeName: $(hn).val(),
+                AwayName: $(an).val()
+            });
+        }
+
+        function saveTime() {
+            storage.update(payloadDataKey, {
+                CurrentTime: $(ct).val()
+            });
+        }
+
+        function saveValues() {
+            storage.set(payloadDataKey, {
+                HomeScore: $(hs).val(),
+                AwayScore: $(as).val(),
+                HomeName: $(hn).val(),
+                AwayName: $(an).val(),
+                CurrentTime: $(ct).val()
+            });
+        }
+
+        function payloadDataGot(what) {
+            console.log('payloadDataGot: ' + what);
+            if (what == null) {
+                return;
+            }
+
+            if (what.HomeScore !== undefined) {
+                $(hs).val(what.HomeScore);
+            }
+
+            if (what.AwayScore !== undefined) {
+                $(as).val(what.AwayScore);
+            }
+
+            if (what.HomeName !== undefined) {
+                $(hn).val(what.HomeName);
+            }
+
+            if (what.AwayName !== undefined) {
+                $(an).val(what.AwayName);
+            }
+
+            if (what.CurrentTime !== undefined) {
+                $(ct).val(what.CurrentTime);
+            }
+        }
+
+
+        function userDataGot(what) {
+            console.log('userDataGot: ' + what);
+
+            if (what == null) {
+                return;
+            }
+
+            if (what.Token !== undefined) {
+                token = what.Token;
+            }
+
+            if (what.IDs !== undefined) {
+                if (what.IDs) {
+                    var ids = what.IDs;
+
+                    var idsp = ids.trim().split(',');
+                    for (var i = 0; i < idsp.length; i++) {
+                        appids.push(idsp[i].trim());
+                    }
+
+                    setOutputs();
+
+                }
+            }
+        }
+
+        function addHome() {
+            add(hs);
+        }
+
+        function removeHome() {
+            remove(hs);
+        }
+
+        function addAway() {
+            add(as);
+        }
+
+        function removeAway() {
+            remove(as);
+        }
+
+        function remove(team) {
+            var num = parseInt($(team).val());
+            if (num <= 0)
+                return;
+
+            $(team).val(num - 1);
+            setScore();
+            saveValues();
+        }
+
+        function add(team) {
+            var num = parseInt($(team).val());
+
+            $(team).val(num + 1);
+            setScore();
+            saveValues();
+        }
+
+
+        function sendRequest(body, appinstanceID, isTime) {
+            var request = new XMLHttpRequest();
+
+
+            //addtoken
+            var singularurl = 'https://app.singular.live/apiv1/control/' + token;
+
+
+            request.onreadystatechange = function() {
+                if (request.readyState == 4 && request.status == 200) {
+                    if (isTime) {
+                        getTime();
+                    }
+                    reqcallback(request.responseText); // Another callback here
+                }
+            };
+
+            request.open("PUT", singularurl, true);
+            request.withCredentials = false;
+
+            request.setRequestHeader('Content-Type', 'application/json');
+
+            var stringi = JSON.stringify(body);
+
+            request.send(stringi);
+        }
+
+
+
+        /**************************************************************************
+         * singularRestGET
+         */
+        function getNodes() {
+            var responseMessage;
+            var options;
+
+            // setup the HTTP call
+            options = {
+                'method': 'GET',
+                'contentType': 'application/json',
+                'credentials': 'omit'
+            };
+            var url = 'https://app.singular.live/apiv1/control/' + token;
+
+            fetch(url, options)
+                .then((httpResponse) => {
+                    if (httpResponse.ok) {
+                        return httpResponse.json();
+                    } else {
+                        return Promise.reject("Fetch did not succeed");
+                    }
+                })
+                .then(json => {
+                    json.forEach(function(element) {
+                        if (element.compositionName === "Scorebug") {
+                            var el = element.controlNode;
+                            if (el != null) {
+                                var nodes = el.payload;
+                                if (nodes != null) {
+                                    if (nodes["Team 1 Score"] != null) {
+                                        $(hs).val(nodes["Team 1 Score"]);
+                                    }
+
+                                    if (nodes["Team 2 Score"] != null) {
+                                        $(as).val(nodes["Team 2 Score"]);
+                                    }
+
+                                    if (nodes["Team 1 Name"] != null) {
+                                        $(hn).val(nodes["Team 1 Name"]);
+                                    }
+
+                                    if (nodes["Team 2 Name"] != null) {
+                                        $(an).val(nodes["Team 2 Name"]);
+                                    }
+
+                                    if (nodes["Period Start"] != null) {
+                                        $(stt).val(nodes["Period Start"]);
+                                    }
+                                    if (nodes["clock_controller"] != null) {
+                                        timec = nodes["clock_controller"];
+
+                                        if (timec.isRunning === true) {
+                                            $("#startbutton").html('Stop');
+                                            started = true;
+                                        } else {
+                                            $("#startbutton").html('Start');
+                                            started = false;
+                                            $(ct).val(nodes["Period Start"]);
+
+                                        }
+                                         var os = singularApp.ServerDate.getOffset();
+                                        timer = createTimeControl();
+                                        timer.setIntervalTime(500);
+                                        timer.setTimeControl(timec);
+                                        timer.setUpdateCallback(updateTime);
+                                        timer.setOffsetToServerTime(os);
+                                        timer.setAllowBackwardsJump(false);
+                                        timer.setRoundToInterval(true);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch((err) => {
+                    console.log("ERROR: " + err);
+                });
+        }
+
+        function getTime() {
+            var responseMessage;
+            var options;
+
+            // setup the HTTP call
+            options = {
+                'method': 'GET',
+                'contentType': 'application/json',
+                'credentials': 'omit'
+            };
+            var url = 'https://app.singular.live/apiv1/control/' + token;
+
+            fetch(url, options)
+                .then((httpResponse) => {
+                    if (httpResponse.ok) {
+                        return httpResponse.json();
+                    } else {
+                        return Promise.reject("Fetch did not succeed");
+                    }
+                })
+                .then(json => {
+                    json.forEach(function(element) {
+                        if (element.compositionName === "Scorebug") {
+                            var el = element.controlNode;
+                            if (el != null) {
+                                var nodes = el.payload;
+                                if (nodes != null) {
+                                    if (nodes["Period Start"] != null) {
+                                        $(stt).val(nodes["Period Start"]);
+                                       // $(ct).val(nodes["Period Start"]);
+                                    }
+                                    if (nodes["clock_controller"] != null) {
+                                        timec = nodes["clock_controller"];
+
+                                        if (timec.isRunning === true) {
+                                            $("#startbutton").html('Stop');
+                                            started = true;
+                                        } else {
+                                            $("#startbutton").html('Start');
+                                            started = false;
+                                            $(ct).val(nodes["Period Start"]);
+                                        }
+                                         var os = singularApp.ServerDate.getOffset();
+                                        timer = createTimeControl();
+                                        timer.setIntervalTime(500);
+                                        timer.setTimeControl(timec);
+                                        timer.setUpdateCallback(updateTime);
+                                        timer.setOffsetToServerTime(os);
+                                        timer.setAllowBackwardsJump(false);
+                                        timer.setRoundToInterval(true);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch((err) => {
+                    console.log("ERROR: " + err);
+                });
+        }
+
+        function reqcallback(data) {
+            console.log(data);
+        }
+
+        function updateTime() {
+            var runningTime = timer.getCurrentTime();
+
+            var start = $(stt).val();
+
+            var sp = start.split(':');
+            var clockmm = parseInt(sp[0]);
+            var clockss = parseInt(sp[1]);
+
+            // calculate the end time. all time calculation will be in milliseconds
+            var beginTime = (clockmm * 60.0 + clockss) * 1000.0;
+
+            // this is the time when we count upwards
+            var current = runningTime + beginTime;
+
+            // there is no need to send something into the sub comp if nothing has changed.
+            if (current == oldCurrent) {
+                return;
+            }
+
+            oldCurrent = current;
+            var obj = moment.utc(current);
+            var min = obj.minutes();
+            var secs = obj.seconds();
+            $(ct).val(min + ":" + secs);
+        }
+
+
+        var createTimeControl = function() {
+            return (function() {
+                return {
+                    tc: {
+                        UTC: 0,
+                        isrunning: false,
+                        value: 0
+                    },
+
+                    allowBackwardsJump: false,
+                    roundToInterval: true,
+
+                    intervalID: null,
+                    timeoutID: null,
+                    oldRunningTime: 0,
+                    intervalTime: 1000,
+                    offsetToServerTime: 0,
+                    updateCallback: null,
+
+                    setOffsetToServerTime: function(time) {
+                        if (this._isNumeric(time)) {
+                            this.offsetToServerTime = parseFloat(time);
+                        }
+                    },
+
+                    setIntervalTime: function(time) {
+                        if (this._isNumeric(time)) {
+                            let t = parseFloat(time);
+                            if (t != this.intervalTime) {
+                                this.intervalTime = parseFloat(time);
+                                this._clearInterval();
+                                this._startInterval();
+                            }
+                        }
+                    },
+
+                    setUpdateCallback: function(callback) {
+                        this.updateCallback = callback;
+                    },
+
+                    setAllowBackwardsJump: function(v) {
+                        this.allowBackwardsJump = v;
+                    },
+
+                    setRoundToInterval: function(v) {
+                        this.roundToInterval = v;
+                    },
+
+                    setTimeControl: function(tc) {
+                        // check if tc is actually a timecontrol object
+                        if (tc === undefined && tc.value === undefined && tc.UTC === undefined && tc.isRunning === undefined) {
+                            return;
+                        }
+
+                        if (tc.value != this.tc.value || tc.UTC != this.tc.UTC || tc.isRunning != this.tc.isRunning) {
+                            // the clock was reset. Also start my local running time at 0
+                            if (tc.value <= this.tc.value) {
+                                this.oldRunningTime = 0;
+                            }
+
+                            if (this.tc.isRunning != tc.isRunning) {
+                                // remember tc already here, because we will need it in the functions below
+                                this.tc = tc;
+
+                                this._clearInterval();
+
+                                // start the timeout
+                                if (this.tc.isRunning) {
+                                    this._startInterval();
+                                    return;
+                                }
+                            } else {
+                                this.tc = tc;
+                            }
+                            this._executeUpdateCallback();
+                        }
+                    },
+
+                    getCurrentTime: function() {
+                        var runningTime = this.tc.value;
+                        if (this.tc.isRunning) {
+                            // we take the local time and subtract the last UTC. And then we subtract the difference between server and local time
+                            runningTime += Date.now() - this.tc.UTC - this.offsetToServerTime;
+                        }
+
+                        // we do not allow the time to run backwards. This can happen when the clock is stopped, because
+                        // the local time keeps on running while the command to stop the clock is sent. 
+                        // That would cause the clock to jump backwards a bit, which looks really stupid.
+                        // but this is a real problem in case you want to show an exact time.
+                        if (!this.allowBackwardsJump) {
+                            if (runningTime < this.oldRunningTime) {
+                                runningTime = this.oldRunningTime;
+                            } else {
+                                this.oldRunningTime = runningTime;
+                            }
+                        }
+
+                        // round the time we display to the update interval. This makes the time we show much more stable
+                        let correction = 0;
+                        if (this.roundToInterval) {
+                            var remainder = runningTime % this.intervalTime;
+                            if (remainder > this.intervalTime / 2) {
+                                correction = this.intervalTime - remainder;
+                            } else {
+                                correction = -remainder;
+                            }
+                        }
+                        return runningTime + correction;
+                    },
+
+                    _clearInterval: function() {
+                        // clear the interval that exists
+                        if (this.intervalID) {
+                            clearInterval(this.intervalID);
+                            this.intervalID = null;
+                        }
+
+                        // clear the timeout
+                        if (this.timeoutID) {
+                            clearTimeout(this.timeoutID);
+                            this.timeoutID = null;
+                        }
+                    },
+
+                    _startInterval: function() {
+                        // now caclulate the remainder with the running time and interval
+                        // so that our setInterval below always hits at exactly that right time
+                        let remainder = this.getCurrentTime() % this.intervalTime;
+
+                        // stop the interval and timeout
+                        this._clearInterval();
+
+                        // create a timeout to wait for the difference between interval time and remainder.
+                        // we try to get the timeout to run exactly on the time where the intervaltime changes.
+                        // e.g. for 1sec the interval should execute so that the time in the updateSubCompInstance function
+                        // is as close to the second as possible. For 0.1sec it doesn't really matter, for sec also, but minute is important.
+                        this.timeoutID = setTimeout(function() {
+                            this._executeUpdateCallback();
+
+                            // create the new interval
+                            this.intervalID = setInterval(function() {
+                                this._executeUpdateCallback();
+                            }.bind(this), this.intervalTime);
+                        }.bind(this), this.intervalTime - remainder);
+                    },
+
+                    _executeUpdateCallback: function() {
+                        if (this.updateCallback) {
+                            this.updateCallback();
+                        }
+                    },
+
+                    _isNumeric: function isNumeric(n) {
+                        return !isNaN(parseFloat(n)) && isFinite(n);
+                    },
+                };
+            }());
+        }
+    </script>
+
+
+</body>
+
+</html>

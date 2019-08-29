@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Singular - Soccer Control App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://app.singular.live/libs/ServerDate.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/easytimer@1.1.1/src/easytimer.min.js"></script>
+    <!--<script src="https://app.singular.live/libs/singularappstandalone/0.0.1/singularappstandalone.js"></script>-->
+    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="images/singular.png" width="230" alt="Singular.Live" title="">
+            </div>
+
+            <nav>
+                <li class="buttonactive"><a href="app.html">Home</a></li>
+                <li><a href="config.html">Configuration</a></li>
+                <li><a id="prodlink" href="playout.html" class="isDisabled">Production</a></li>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <h3>Welcome to the Soccer Control Application!</h3>
+        </div>
+    </div>
+    <div class="container">
+        <h2>What do you want to do?</h2>
+    </div>
+    <div class="buttons">
+        <a href="config.html" class="bluebutton">Configuration</a>
+        <a id="prodbutton" href="playout.html" class="bluebutton isDisabled">Production</a>
+    </div>
+
+    <script>
+        const usr = "#usr";
+        const pwd = "#pwd";
+        const appid = "#appid";
+        var singularapp;
+
+        const userDataKey = 'UserData';
+
+        var storage;
+
+        $(document).ready(function() {
+            $('#prodlink').click(function(e) {
+                e.preventDefault();
+                //do other stuff when a click happens
+            });
+            $('#prodbutton').click(function(e) {
+                e.preventDefault();
+                //do other stuff when a click happens
+            });
+            document.getElementById('prodlink').href = '';
+            document.getElementById('prodlink').className = 'isDisabled';
+            document.getElementById('prodbutton').href = '';
+            document.getElementById('prodbutton').className = 'bluebutton isDisabled';
+        });
+
+        function singularAppInit(app) {
+            singularApp = app;
+            if (singularApp) {
+                storage = singularApp.storage;
+                storage.get(userDataKey, userDataGot);
+            }
+        }
+
+
+        function userDataGot(what) {
+            console.log('userDataGot: ' + what);
+
+            if (what == null) {
+                $('#prodlink').click(function(e) {
+                    e.preventDefault();
+                    //do other stuff when a click happens
+                });
+                $('#prodbutton').click(function(e) {
+                    e.preventDefault();
+                    //do other stuff when a click happens
+                });
+                document.getElementById('prodlink').href = '';
+                document.getElementById('prodlink').className = 'isDisabled';
+                document.getElementById('prodbutton').href = '';
+                document.getElementById('prodbutton').className = 'bluebutton isDisabled';
+                return;
+            }
+
+            var user = null;
+            var pass = null;
+            var appidd = null;
+
+            if (what.Username !== undefined) {
+                user = what.Username;
+            }
+
+            if (what.Password !== undefined) {
+                pass = what.Password;
+            }
+
+            if (what.IDs !== undefined) {
+                appidd = what.IDs;
+            }
+
+            if (appidd && user && pass) {
+                
+                $('#prodlink').click(function(e) {
+                    window.location.href = "playout.html";
+                });
+                $('#prodbutton').click(function(e) {
+                    window.location.href = "playout.html";
+                });
+                document.getElementById('prodlink').href = 'playout.html';
+                document.getElementById('prodlink').className = '';
+                document.getElementById('prodbutton').href = 'playout.html';
+                document.getElementById('prodbutton').className = 'bluebutton';
+            } else {
+                $('#prodlink').click(function(e) {
+                    e.preventDefault();
+                    //do other stuff when a click happens
+                });
+                $('#prodbutton').click(function(e) {
+                    e.preventDefault();
+                    //do other stuff when a click happens
+                });
+                document.getElementById('prodlink').href = '';
+                document.getElementById('prodlink').className = 'isDisabled';
+                document.getElementById('prodbutton').href = '';
+                document.getElementById('prodbutton').className = 'bluebutton isDisabled';
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

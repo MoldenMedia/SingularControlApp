@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Singular - Soccer Control App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet" type="text/css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://app.singular.live/libs/ServerDate.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/easytimer@1.1.1/src/easytimer.min.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="images/singular.png" width="230" alt="Singular.Live" title="">
+            </div>
+
+            <nav>
+                <li><a href="app.html">Home</a></li>
+                <li class="buttonactive"><a href="config.html">Configuration</a></li>
+                <li><a id="prodlink" href="playout.html" class="isDisabled">Production</a></li>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <h3>Connect your Singular Account and Tokens:</h3>
+        </div>
+    </div>
+
+    <div class="form">
+        <form>
+            <table align="center">
+                <tr>
+                    <td>
+                        <a for="username" class="formcontrol">Singular Username:</a>
+                    </td>
+                    <td>
+                        <input type="text" placeholder="  username" id="usr" style="width:250px; height:25px">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a for="password" class="formcontrol">Singular Password:</a>
+                    </td>
+                    <td>
+                        <input type="password" placeholder="  password" id="pwd" style="width:250px; height:25px">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a for="baseurl" class="formcontrol">Main Channel Tokens:</a>
+                    </td>
+                    <td>
+                        <input type="text" placeholder="  token" id="appid" style="width:250px; height:25px">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td> # </td>
+                    <td> # </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://www.singular.live/" style="color:red; text-decoration: underline;">Help me!</a>
+                    </td>
+                    <td>
+                        <a href="config.html" class="savebutton" onclick="saveIt();">Save</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+
+    <script>
+        var singularApp;
+
+        const usr = "#usr";
+        const pwd = "#pwd";
+        const appid = "#appid";
+        const userDataKey = 'UserData';
+
+        var storage;
+
+        $(document).ready(function() {
+            $('#prodlink').click(function(e) {
+                e.preventDefault();
+                //do other stuff when a click happens
+            });
+            document.getElementById('prodlink').href = '';
+            document.getElementById('prodlink').className = 'isDisabled';
+        });
+
+
+        function singularAppInit(app) {
+            singularApp = app;
+            if (singularApp) {
+                storage = singularApp.storage;
+                storage.get(userDataKey, userDataGot);
+            }
+        }
+
+
+
+        function userDataGot(what) {
+            console.log('userDataGot: ' + what);
+
+            if (what == null) {
+                $('#prodlink').click(function(e) {
+                    e.preventDefault();
+                    //do other stuff when a click happens
+                });
+                document.getElementById('prodlink').href = '';
+                document.getElementById('prodlink').className = 'isDisabled';
+                return;
+            }
+
+            var user = null;
+            var pass = null;
+            var appids = null;
+
+            if (what.Username !== undefined) {
+                user = what.Username;
+            }
+
+            if (what.Password !== undefined) {
+                pass = what.Password;
+            }
+
+            if (what.IDs !== undefined) {
+                appids = what.IDs;
+            }
+
+            if (appids && user && pass) {
+                $('#prodlink').click(function(e) {
+                    window.location.href = "playout.html";
+                });
+                document.getElementById('prodlink').href = 'playout.html';
+                document.getElementById('prodlink').className = '';
+            } else {
+                $('#prodlink').click(function(e) {
+                    e.preventDefault();
+                    //do other stuff when a click happens
+                });
+                document.getElementById('prodlink').href = '';
+                document.getElementById('prodlink').className = 'isDisabled';
+            }
+
+            $(usr).val(user);
+            $(pwd).val(pass);
+            $(appid).val(appids);
+        }
+
+
+        function saveIt() {
+            var user = $(usr).val();
+            var pwde = $(pwd).val();
+            var appidd = $(appid).val();
+
+            storage.set(userDataKey, {
+                Username: user,
+                Password: pwde,
+                IDs: appidd
+            });
+
+            if (appidd && user && pwde) {
+                $('#prodlink').click(function(e) {
+                    window.location.href = "playout.html";
+                });
+                document.getElementById('prodlink').href = 'playout.html';
+                document.getElementById('prodlink').className = '';
+            } else {
+                $('#prodlink').click(function(e) {
+                    e.preventDefault();
+                    //do other stuff when a click happens
+                });
+                document.getElementById('prodlink').href = '';
+                document.getElementById('prodlink').className = 'isDisabled';
+            }
+        }
+
+    </script>
+
+
+</body>
+
+</html>

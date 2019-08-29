@@ -1,0 +1,63 @@
+.confbutton {
+    width: 80%;
+    height: 80%;
+}
+
+.col-centered {
+    float: none;
+    margin: 0 auto;
+}
+
+a.disabled {
+    pointer-events: none;
+}
+
+a[disabled] {
+    pointer-events: none;
+}
+
+.i-am-centered {
+    margin: auto;
+    max-width: 680px;
+}
+
+.flexbox {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: center;    
+}
+
+.flexitem {
+    flex-basis: 45%;
+}
+
+.stacked {
+    display: block;
+}
+
+.smallbuttons {
+    width: 25px;
+    height: 25px;
+}
+
+.setbuttons {
+    width: 100px;
+    height: 35px;
+}
+
+.bottomsetbutton {
+    margin-top: 8px;
+}
+
+
+#appframe {
+    margin: 0 auto;
+    width: 640px;
+    height: 480px;
+}
+
+#clocktext {
+    height: 74px;
+    margin: 2px;
+    text-align: center;
+}

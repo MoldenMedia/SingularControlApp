@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://app.singular.live/libs/ServerDate.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/easytimer@1.1.1/src/easytimer.min.js"></script>
+    <!--<script src="https://app.singular.live/libs/singularappstandalone/0.0.1/singularappstandalone.js"></script>-->
+    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+
+</head>
+
+<body style="margin: 0; background:#F4F4F4" onload="onLoaded();">
+    <div class="container">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="app.html">Soccer Control Application</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="app.html">Home</a></li>
+                    <li><a href="conf.html">Configuration</a></li>
+                    <li class="active"><a href="prod.html">Production</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="row">
+            <div class=" text-center">
+                <iframe id="appframe" src=""></iframe>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-centered text-center">
+                <div class="flexbox " style="background: #FFFFFF; border-radius: 5px;">
+                    <input type="text" id="homeTeamName" class="text-center" placeholder="FCB" value="FCB">
+                    <div>
+                        <button type="button" class="btn-primary  stacked smallbuttons" onclick="addHome();">+</button>
+                        <button type="button" class="btn-primary  stacked smallbuttons" onclick="removeHome();">-</button>
+                    </div>
+                    <input type="text" style="width: 40px" class="text-center" id="homeScore" placeholder="0" value="0">
+
+                    <input type="text" style="width: 40px" class="text-center" id="awayScore" placeholder="0" value="0">
+                    <div>
+                        <button type="button" class="btn-primary stacked smallbuttons" onclick="addAway();">+</button>
+                        <button type="button" class="btn-primary stacked smallbuttons" onclick="removeAway();">-</button>
+                    </div>
+                    <input type="text" id="awayTeamName" class="text-center" placeholder="HSV" value="HSV">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class=" col-centered  text-center">
+                <div class="flexbox" style="background: #FFFFFF; border-radius: 5px; margin-top: 5px; ">
+                    <button type="button" class="btn-primary" style=" height: 40px" onclick="setTeams();">SET TEAMS</button>
+                    <button type="button" class="btn-primary" onclick="setScore();">SET SCORE</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-centered  text-center">
+                <div class="flexbox" style="margin-top: 5px;">
+                    <div>
+                        <button type="button" class="btn-primary stacked col-centered setbuttons" onclick="clockIn();">CLOCK IN </button>
+                        <button type="button" class="btn-primary stacked col-centered setbuttons bottomsetbutton" onclick="clockOut();">CLOCK OUT</button>
+                    </div>
+
+                    <div>
+                        <input type="text" id="clocktext" placeholder="00:00" value="00:00" onkeypress="return AllowNumbersOnly(event)">
+                    </div>
+
+
+                    <div>
+                        <button type="button" class="btn-primary stacked col-centered setbuttons" onclick="setTime();">SET TIME</button>
+                        <button type="button" class="btn-primary stacked col-centered setbuttons bottomsetbutton" id="startbutton" onclick="startStopClock();">START</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const payloadDataKey = 'PayloadData';
+
+        const usr = "#usr";
+        const pwd = "#pwd";
+        const appid = "#appid";
+
+        const hs = "#homeScore";
+        const as = "#awayScore";
+
+        const hn = "#homeTeamName";
+        const an = "#awayTeamName";
+
+        const ct = "#clocktext"
+
+
+
+        const cOut = "Out";
+        const cIn = "In";
+
+        const cA = "action";
+        const cF = "from";
+        const cT = "to";
+        const cAni = "animation";
+        const cDo = "play";
+
+        const cCN = "compositionName";
+        const cPL = "payload";
+        const cCoNo = "controlNode";
+
+        const cUID = "socceruid";
+        const cUserID = "socceruserid";
+        const cUserPW = "soccerpassword";
+
+
+        var username = "";
+        var pass = "";
+        var appids = [];
+        var auth = "";
+
+
+        var timer = new Timer();
+
+
+        let controlid = {};
+        let state = {};
+        let dbid = {};
+        let constring = {};
+        let clocktime = {};
+        let dbtimer = null;
+
+        let singulardata = [];
+        let clockdata = [];
+
+        var singularApp;
+        var storage;
+        var started = false;
+
+
+        function onLoaded() {
+            username = localStorage.getItem(usr);
+            pass = localStorage.getItem(pwd);
+            var ids = localStorage.getItem(appid);
+            if (ids) {
+                var idsp = ids.trim().split(',');
+                for (var i = 0; i < idsp.length; i++) {
+                    appids.push(idsp[i].trim());
+                }
+
+                setOutputs();
+            }
+            auth = btoa(username + ":" + pass);
+
+            //update score from db
+        }
+
+        function singularAppInit(app) {
+            singularApp = app;
+            if (singularApp) {
+                storage = singularApp.storage;
+                storage.get(payloadDataKey, payloadDataGot);
+            }
+            timer.addEventListener('secondsUpdated', function(e) {
+                updateTime();
+            });
+        }
+
+        function setOutputs() {
+            $("#appframe").attr('src', "https://app.singular.live/appinstances/" + appids[0] + "/outputs/Output/onair");
+        }
+
+
+        function AllowNumbersOnly(e) {
+            var code = (e.which) ? e.which : e.keyCode;
+            if (code > 31 && (code < 48 || code > 57) && code != 58) {
+                e.preventDefault();
+            }
+        }
+
+        function setScore() {
+            var body = [{
+                [cCN]: "Scorebug",
+                [cCoNo]: {
+                    [cPL]: {
+                        ["Team 1 Score"]: $(hs).val(),
+                        ["Team 2 Score"]: $(as).val()
+                    }
+                }
+            }];
+
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id);
+            }
+
+            saveValues();
+        }
+
+        function setTeams() {
+
+            var body = [{
+                [cCN]: "Scorebug",
+                [cCoNo]: {
+                    [cPL]: {
+                        ["Team 1 Name"]: $(hn).val(),
+                        ["Team 2 Name"]: $(an).val()
+                    }
+                }
+            }];
+
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id);
+            }
+
+            saveValues();
+        }
+
+
+        function clockIn() {
+
+            var body = [{
+                [cCN]: "Scorebug",
+                [cAni]: {
+                    [cA]: cDo,
+                    [cF]: cOut,
+                    [cT]: cIn
+                }
+            }];
+
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id);
+            }
+
+        }
+
+        function clockOut() {
+
+            var body = [{
+                [cCN]: "Scorebug",
+                [cAni]: {
+                    [cA]: cDo,
+                    [cF]: cIn,
+                    [cT]: cOut
+                }
+            }];
+
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id);
+            }
+
+
+        }
+
+        function startStopClock() {
+            if (started) {
+                stopClock();
+            } else {
+                startClock();
+            }
+
+            var body = null;
+
+            var startime = $(ct).val();
+            var splitted = startime.split(':');
+            var utcNow = Date.now();
+
+            if (!started) {
+                body = [{
+                    [cCN]: "Scorebug",
+                    [cCoNo]: {
+                        [cPL]: {
+                            ["Running"]: false,
+                            ["Period Start"]: startime
+                        }
+                    }
+                }];
+
+            } else {
+                body = [{
+                    [cCN]: "Scorebug",
+                    [cCoNo]: {
+                        [cPL]: {
+                            ["Period Start"]: startime,
+                            ["Running"]: true,
+                            ["UTC Start"]: utcNow
+                        }
+                    }
+                }];
+            }
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id);
+            }
+        }
+
+        function stopClock() {
+            timer.pause();
+            started = false;
+            $("#startbutton").html('Start');
+        }
+
+        function startClock() {
+            timer.start();
+            started = true;
+            $("#startbutton").html('Stop');
+
+        }
+
+        function updateTime() {
+            var clk = $(ct).val();
+
+            var sp = clk.split(":");
+            var cm = sp[0];
+            var cs = sp[1];
+            var fs = (parseInt(cm) * 60) + parseInt(cs);
+
+            fs += 1;
+
+            var nm = parseInt((fs / 60));
+            var ns = fs % 60;
+
+            $(ct).val(trailingZeros(nm) + ":" + trailingZeros(ns));
+            
+            
+            saveValues();
+        }
+
+        function setTime() {
+            var startime = $(ct).val();
+            var splitted = startime.split(':');
+            var utcNow = Date.now();
+
+            var body = [{
+                [cCN]: "Scorebug",
+                [cCoNo]: {
+                    [cPL]: {
+                        ["Period Start"]: startime,
+                        ["UTC Start"]: utcNow
+                    }
+                }
+            }];
+
+            if (appids.length <= 0)
+                return;
+
+            for (var i = 0; i < appids.length; i++) {
+                var id = appids[i];
+                sendRequest(body, id);
+            }
+        }
+
+
+
+
+        function trailingZeros(number) {
+            switch (typeof number) {
+                case 'number':
+                    return ((number < 10) && (number >= 0)) ? ("0") + number : number;
+                case 'string':
+                    return ((number.toString().length < 2) && (number.toString().length > 0)) ? "0" + number : number;
+                case 'undefined':
+                    return "00";
+            }
+        }
+
+        function hmsToSecondsOnly(str) {
+            if (!(typeof str === "string")) {
+                return null;
+            }
+            var p = str.split(':'),
+                s = 0,
+                m = 1;
+            while (p.length > 0) {
+                s += m * parseInt(p.pop(), 10);
+                m *= 60;
+            }
+            return s;
+        }
+
+        function secondsToHms(d) {
+            d = Number(d);
+            var m = Math.floor(d / 60);
+            var s = Math.floor(d % 3600 % 60);
+            return ((m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s);
+        }
+
+        function saveScore() {
+            storage.update(payloadDataKey, {
+                HomeScore: $(hs).val(),
+                AwayScore: $(as).val()
+            });
+        }
+
+        function saveNames() {
+            storage.update(payloadDataKey, {
+                HomeName: $(hn).val(),
+                AwayName: $(an).val()
+            });
+        }
+
+        function saveTime() {
+            storage.update(payloadDataKey, {
+                CurrentTime: $(ct).val()
+            });
+        }
+
+        function saveValues() {
+            storage.set(payloadDataKey, {
+                HomeScore: $(hs).val(),
+                AwayScore: $(as).val(),
+                HomeName: $(hn).val(),
+                AwayName: $(an).val(),
+                CurrentTime: $(ct).val()
+
+            });
+        }
+
+        function payloadDataGot(what) {
+            console.log('payloadDataGot: ' + what);
+            if (what == null) {
+                return;
+            }
+
+            if (what.HomeScore !== undefined) {
+                $(hs).val(what.HomeScore);
+            }
+
+            if (what.AwayScore !== undefined) {
+                $(as).val(what.AwayScore);
+            }
+
+            if (what.HomeName !== undefined) {
+                $(hn).val(what.HomeName);
+            }
+
+            if (what.AwayName !== undefined) {
+                $(an).val(what.AwayName);
+            }
+
+            if (what.CurrentTime !== undefined) {
+                $(ct).val(what.CurrentTime);
+            }
+        }
+
+        function addHome() {
+            add(hs);
+        }
+
+        function removeHome() {
+            remove(hs);
+        }
+
+        function addAway() {
+            add(as);
+        }
+
+        function removeAway() {
+            remove(as);
+        }
+
+        function remove(team) {
+            var num = parseInt($(team).val());
+            if (num <= 0)
+                return;
+
+            $(team).val(num - 1);
+            setScore();
+            saveValues();
+        }
+
+        function add(team) {
+            var num = parseInt($(team).val());
+
+            $(team).val(num + 1);
+            setScore();
+            saveValues();
+        }
+
+
+        function sendRequest(body, appinstanceID) {
+            var request = new XMLHttpRequest();
+            var singularurl = 'https://app.singular.live/apiv1/appinstances/' + appinstanceID + '/control';
+
+            request.onreadystatechange = function() {
+                if (request.readyState == 4 && request.status == 200) {
+                    callback(request.responseText); // Another callback here
+                }
+            };
+
+            request.open("PUT", singularurl, true);
+            request.withCredentials = true;
+            request.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + pass));
+
+            request.setRequestHeader('Content-Type', 'application/json');
+
+            var stringi = JSON.stringify(body);
+
+            request.send(stringi);
+        }
+
+        function callback(data) {
+            console.log(data);
+        }
+
+    </script>
+</body>
+
+</html>

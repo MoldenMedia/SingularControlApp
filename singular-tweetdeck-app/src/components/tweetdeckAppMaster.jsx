@@ -11,7 +11,7 @@ class AppTweetdeckMaster extends Component {
     return (
       <React.Fragment>
         <nav className="navbar navbar-light bg-light">
-          <span className="navbar-brand mb-0 h1">Tweetdeck App</span>
+          <span className="navbar-brand mb-0 h1">Tweetdeck API cloud functions</span>
         </nav>
         <Tabs
           className="m-2"
@@ -20,7 +20,6 @@ class AppTweetdeckMaster extends Component {
           onSelect={k => this.setState({ key: k })}
         >
           <Tab eventKey="playout" title="Playout">
-            <h4>Welcome to playout ......</h4>
             <AppTweetdeckPlayout />
           </Tab>
           <Tab eventKey="setup" title="Setup">
