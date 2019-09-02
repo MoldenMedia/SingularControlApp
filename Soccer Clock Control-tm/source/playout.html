@@ -130,10 +130,10 @@
         <div class="prodbuttons">
           <a class="prodbluebutton" onclick="setTeams();" style="margin-left: 5px">SET TEAMS</a>
           <a class="prodbluebutton" onclick="setScore();">SET SCORE</a>
-          <a class="prodbluebutton" onclick="clockIn();" style="margin-left: 165px">CLOCK IN</a>
-          <a class="prodbluebutton" onclick="clockOut();">CLOCK OUT</a>
+          <a class="prodbluebutton" onclick="scorebugIn();" style="margin-left: 165px">SCORE IN</a>
+          <a class="prodbluebutton" onclick="scorebugOut();">SCORE OUT</a>
           <a class="prodbluebutton" onclick="setTime();">SET TIME</a>
-          <a class="prodbluebutton" id="startbutton" onclick="startStopClock();">START</a>
+          <a class="btnClockStart" id="startbutton" onclick="startStopClock(this);">START</a>
         </div>
       </div>
     </div>
@@ -155,7 +155,7 @@
       />
 
       <div class="prodbuttons">
-        <a class="btnIN" onclick="scorebugLinesIO(this)" style="margin-left: 6px">IN</a>
+        <a id="button_scorebug_lines_io" class="btnIN" onclick="scorebugLinesIO(this)" style="margin-left: 6px">IN</a>
       </div>
     </div>
     <div id="second_line_div">
@@ -467,66 +467,103 @@
         }
         saveValues();
       }
-      /***********************************************************************/
+      /*************************************************************************/
 
-      function clockIn() {
+      /**************************************************************************
+       * scorebugIn()
+       */
+      function scorebugIn() {
         setOvertime();
         animToState("Scorebug", cOut, cIn);
       }
 
-      function clockOut() {
+      /**************************************************************************
+       * scorebugOut()
+       */
+      function scorebugOut() {
         animToState("Added Time", cIn, cOut);
         animToState("Scorebug", cIn, cOut);
+        // take out scorebug lines
+        var scorebugButton = document.getElementById("button_scorebug_lines_io");
+        if (scorebugButton.className === "btnOUT") {
+          scorebugLinesIO(scorebugButton);
+        }
       }
 
-      function startStopClock() {
+      /**************************************************************************
+       * startStopClock()
+       */
+
+      // payload = { ["Overtime"]: $(ot).val() };
+      // sendPayload("Added Time", payload);
+      // // toggle css class
+      // if (element.className === "btnOUT") {
+      //   element.classList.remove("btnOUT"); // red
+      //   element.classList.toggle("btnIN"); // grey
+
+      function startStopClock(element) {
         if (started) {
           stopClock();
         } else {
           startClock();
         }
-
-        var body = null;
-
+        // var body = null;
+        var payload = null;
         var startime = $(ct).val();
         var splitted = startime.split(":");
         var utcNow = Date.now();
 
         if (!started) {
-          body = [
-            {
-              [cCN]: "Scorebug",
-              [cCoNo]: {
-                [cPL]: {
-                  ["Running"]: false,
-                  ["Period Start"]: startime
-                }
-              }
-            }
-          ];
+          // body = [
+          //   {
+          //     [cCN]: "Scorebug",
+          //     [cCoNo]: {
+          //       [cPL]: {
+          //         ["Running"]: false,
+          //         ["Period Start"]: startime
+          //       }
+          //     }
+          //   }
+          // ];
+          element.classList.remove("btnClockStop");
+          element.classList.toggle("btnClockStart");
+          payload = {
+            ["Running"]: false,
+            ["Period Start"]: startime
+          };
+          sendPayload("Scorebug", payload);
         } else {
-          body = [
-            {
-              [cCN]: "Scorebug",
-              [cCoNo]: {
-                [cPL]: {
-                  ["Period Start"]: startime,
-                  ["Running"]: true,
-                  ["UTC Start"]: utcNow
-                }
-              }
-            }
-          ];
+          // body = [
+          //   {
+          //     [cCN]: "Scorebug",
+          //     [cCoNo]: {
+          //       [cPL]: {
+          //         ["Period Start"]: startime,
+          //         ["Running"]: true,
+          //         ["UTC Start"]: utcNow
+          //       }
+          //     }
+          //   }
+          // ];
+          element.classList.remove("btnClockStart");
+          element.classList.toggle("btnClockStop");
+          payload = {
+            ["Period Start"]: startime,
+            ["Running"]: true,
+            ["UTC Start"]: utcNow
+          };
+          sendPayload("Scorebug", payload);
         }
 
-        if (appids.length <= 0) return;
+        // if (appids.length <= 0) return;
 
-        for (var i = 0; i < appids.length; i++) {
-          var id = appids[i];
-          sendRequest(body, id);
-        }
+        // for (var i = 0; i < appids.length; i++) {
+        //   var id = appids[i];
+        //   sendRequest(body, id);
+        // }
       }
 
+      /*************************************************************************/
       function stopClock() {
         timer.pause();
         started = false;
