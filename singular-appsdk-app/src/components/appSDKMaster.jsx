@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import AppSDKHandlerUI from "./appSDKHandlerUI";
 import * as appSDK from "../singularUtilities/appSDKUtilities";
-import { validate } from "@babel/types";
 
 class AppSDKMaster extends Component {
   singularData = {
@@ -531,10 +530,13 @@ class AppSDKMaster extends Component {
       name: ".set(key, data, callback)",
       comment: "data = '{UTC: '" + Date.now() + "'}'",
       handleClick(singularApp) {
+        let utcNow = Date.now();
+        console.log(".set(key, data, callback) - called: utcNow =", utcNow);
         const storage = appSDK.appStorage(singularApp);
-        appSDK.storageSet(storage, "storageName", { UTC: Date.now() }, function() {
-          console.log("storageSet.Callback - called");
+        appSDK.storageSet(storage, "storageName", { UTC: utcNow }, function() {
+          console.log("storageSet.Callback - called: utcNow =", utcNow);
         });
+        console.log(".set(key, data, callback) - finished");
       }
     },
     {
